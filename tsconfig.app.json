@@ -1,0 +1,31 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "src/components.d.ts",
+    "src/auto-imports.d.ts"
+  ],
+  "exclude": ["dist", "node_modules", ".vscode"],
+  "compilerOptions": {
+    "composite": true,
+    "baseUrl": ".",
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "~/*": ["./src/*"],
+      "~/c/*": ["src/components/*"],
+      "@/c/*": ["src/components/*"]
+    }
+  }
+}
