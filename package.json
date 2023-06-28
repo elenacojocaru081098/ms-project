@@ -4,9 +4,7 @@
   "private": false,
   "scripts": {
     "serve": "cross-env NODE_ENV=development vite",
-    "dev:run": "vite",
     "build": "cross-env NODE_ENV=production vite build",
-    "build:run": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
