@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 import { authRoutes } from './auth'
 
+// initialize the router
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -12,6 +13,7 @@ const router = createRouter({
   ]
 })
 
+// navigation guards
 router.beforeEach((to: RouteLocationNormalized) => {
   if (to.name !== 'Auth') return { name: 'Auth' }
 })
