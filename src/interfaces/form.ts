@@ -3,4 +3,6 @@ export interface IFormField {
   rulesKey?: string
   items?: Array<any>
   type: string
+  typeProp?: string
+  prependIcon?: string
 }

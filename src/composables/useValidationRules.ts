@@ -55,7 +55,36 @@ export function useValidationRules() {
     }
   }
 
+  /**
+   * Login form validation rules
+   */
+  function getLoginRules() {
+    return {
+      email: [
+        (value: string) => {
+          if (value) return true
+          return 'Emailul este obligatoriu'
+        }
+      ],
+      pass: [
+        (value: string) => {
+          if (value) return true
+          return 'Parola este obligatorie'
+        }
+      ]
+    }
+  }
+
+  /**
+   * Field validation rules
+   */
+  function getValidationRules(rulesSet: any, key: string | undefined) {
+    if (key) return rulesSet[key as keyof typeof rulesSet]
+  }
+
   return {
-    getRegisterRules
+    getRegisterRules,
+    getLoginRules,
+    getValidationRules
   }
 }

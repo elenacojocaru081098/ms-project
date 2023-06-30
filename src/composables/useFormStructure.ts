@@ -20,7 +20,7 @@ export function useFormStructure() {
         type: 'text'
       },
       {
-        label: 'Nume',
+        label: 'Email',
         rulesKey: 'email',
         type: 'text'
       },
@@ -42,7 +42,27 @@ export function useFormStructure() {
     ]
   }
 
+  /**
+   * Login form structure
+   */
+  function getLoginForm(): Array<IFormField> {
+    return [
+      {
+        label: 'Email',
+        rulesKey: 'email',
+        type: 'text'
+      },
+      {
+        label: 'Parola',
+        rulesKey: 'pass',
+        type: 'text',
+        typeProp: 'password'
+      }
+    ]
+  }
+
   return {
-    getRegisterForm
+    getRegisterForm,
+    getLoginForm
   }
 }
