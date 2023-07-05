@@ -2,10 +2,13 @@ import { defineStore } from 'pinia'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import type { IBusToast } from '@/interfaces/bus_events'
 import { doc, setDoc } from 'firebase/firestore'
+import { CUSTOM_LIGHT_COLORS } from '@/plugins/vuetify'
 
 export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
   // auth page (login | register)
-  const page = ref<'login' | 'register'>('register')
+  const page = ref<'login' | 'register'>('login')
+
+  const { addTimestamps } = useDbInfo()
 
   /**
    * Create email/password account
@@ -27,25 +30,26 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
           lname: data.lname,
           email: data.email,
           pnc: data.pnc,
-          seal: data.seal,
-          field: data.field,
+          seal: data.seal || null,
+          field: data.field || null,
           birthdate: data.birthdate,
           gender: data.gender
-        }
+        },
+        ...addTimestamps()
       })
 
       await signOut(secondAuth)
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.REGISTER_SUCCEEDED,
-        color: VUETIFY_COLORS.success
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
     } catch (e: any) {
       console.error(e.message)
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.REGISTER_FAILED,
-        color: VUETIFY_COLORS.error
+        color: CUSTOM_LIGHT_COLORS['error-container']
       })
     }
   }
@@ -68,12 +72,14 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.LOGIN_SUCCEEDED,
-        color: VUETIFY_COLORS.success
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
-    } catch (e) {
+    } catch (e: any) {
+      console.error(e.message)
+
       busToast.emit({
         text: NOTIFICATION_MESSAGES.LOGIN_FAILED,
-        color: VUETIFY_COLORS.error
+        color: CUSTOM_LIGHT_COLORS['error-container']
       })
     }
   }

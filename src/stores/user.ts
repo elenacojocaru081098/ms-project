@@ -52,6 +52,7 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
   }
 
   return {
+    user,
     setLoggedUserData,
     setOperationType,
     setProviderId

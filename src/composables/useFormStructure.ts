@@ -46,15 +46,17 @@ export function useFormStructure() {
         value: ''
       },
       {
-        label: 'Parafa',
-        type: 'text',
-        key: 'seal',
+        // TODO: lista predefinita
+        label: 'Specializare',
+        type: 'select',
+        items: [],
+        key: 'field',
         value: ''
       },
       {
-        label: 'Specializare',
+        label: 'Parafa',
         type: 'text',
-        key: 'field',
+        key: 'seal',
         value: ''
       }
     ]

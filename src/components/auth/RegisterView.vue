@@ -5,7 +5,7 @@ const formFields = ref(useFormStructure().getRegisterForm())
 const valid = ref<boolean | null>(null)
 
 function submitRegisterForm() {
-  // if (!valid.value) return
+  if (!valid.value) return
 
   const { handleEmailRegister } = useAuthStore()
   let data: Record<string, string> = {}
@@ -36,6 +36,7 @@ function submitRegisterForm() {
           v-model="field.value"
           variant="solo-filled"
           density="compact"
+          color="on-background"
         ></v-text-field>
         <v-select
           v-if="field.type === 'select'"
@@ -45,11 +46,21 @@ function submitRegisterForm() {
           v-model="field.value"
           variant="solo-filled"
           density="compact"
+          color="on-background"
         ></v-select>
       </section>
     </v-form>
   </v-card-text>
   <v-card-actions class="justify-end">
-    <v-btn form="register-form" type="submit" append-icon="mdi-arrow-right">Inregistrare</v-btn>
+    <v-btn
+      form="register-form"
+      type="submit"
+      append-icon="mdi-arrow-right"
+      class="px-4"
+      variant="elevated"
+      color="primary"
+    >
+      Inregistrare
+    </v-btn>
   </v-card-actions>
 </template>
