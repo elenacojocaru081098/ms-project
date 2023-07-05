@@ -1,7 +1,20 @@
 <script setup lang="ts">
 const validation = useValidationRules()
 const registerRules = validation.getRegisterRules()
-const formFields = useFormStructure().getRegisterForm()
+const formFields = ref(useFormStructure().getRegisterForm())
+const valid = ref<boolean | null>(null)
+
+function submitRegisterForm() {
+  // if (!valid.value) return
+
+  const { handleEmailRegister } = useAuthStore()
+  let data: Record<string, string> = {}
+
+  formFields.value.forEach((f) => (data[f.key] = f.value))
+  data.gender = extractGenderFromPNC(data.pnc)
+  data.birthdate = extractBirthdateFromPNC(data.pnc)
+  handleEmailRegister(data)
+}
 </script>
 
 <template>
@@ -9,12 +22,18 @@ const formFields = useFormStructure().getRegisterForm()
     <v-card-title tag="section">Creare cont</v-card-title>
   </v-card-item>
   <v-card-text>
-    <v-form @submit.prevent validate-on="blur">
+    <v-form
+      id="register-form"
+      @submit.prevent="submitRegisterForm"
+      validate-on="blur"
+      v-model:model-value="valid"
+    >
       <section v-for="field in formFields" :key="field.label">
         <v-text-field
           v-if="field.type === 'text'"
           :label="field.label"
           :rules="validation.getValidationRules(registerRules, field.rulesKey)"
+          v-model="field.value"
           variant="solo-filled"
           density="compact"
         ></v-text-field>
@@ -23,6 +42,7 @@ const formFields = useFormStructure().getRegisterForm()
           :label="field.label"
           :rules="validation.getValidationRules(registerRules, field.rulesKey)"
           :items="field.items"
+          v-model="field.value"
           variant="solo-filled"
           density="compact"
         ></v-select>
@@ -30,6 +50,6 @@ const formFields = useFormStructure().getRegisterForm()
     </v-form>
   </v-card-text>
   <v-card-actions class="justify-end">
-    <v-btn type="submit" append-icon="mdi-arrow-right">Inregistrare</v-btn>
+    <v-btn form="register-form" type="submit" append-icon="mdi-arrow-right">Inregistrare</v-btn>
   </v-card-actions>
 </template>

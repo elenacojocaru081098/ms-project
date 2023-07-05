@@ -12,32 +12,50 @@ export function useFormStructure() {
       {
         label: 'Prenume',
         rulesKey: 'fname',
-        type: 'text'
+        type: 'text',
+        key: 'fname',
+        value: ''
       },
       {
         label: 'Nume',
         rulesKey: 'lname',
-        type: 'text'
+        type: 'text',
+        key: 'lname',
+        value: ''
       },
       {
         label: 'Email',
         rulesKey: 'email',
-        type: 'text'
+        type: 'text',
+        key: 'email',
+        value: ''
       },
       {
         label: 'CNP',
         rulesKey: 'pnc',
-        type: 'text'
+        type: 'text',
+        key: 'pnc',
+        value: ''
       },
       {
         label: 'Rol',
         rulesKey: 'role',
         items: ['Participant', 'Coordonator', 'Admin'],
-        type: 'select'
+        type: 'select',
+        key: 'role',
+        value: ''
       },
       {
         label: 'Parafa',
-        type: 'text'
+        type: 'text',
+        key: 'seal',
+        value: ''
+      },
+      {
+        label: 'Specializare',
+        type: 'text',
+        key: 'field',
+        value: ''
       }
     ]
   }
@@ -50,13 +68,17 @@ export function useFormStructure() {
       {
         label: 'Email',
         rulesKey: 'email',
-        type: 'text'
+        type: 'text',
+        key: 'email',
+        value: ''
       },
       {
         label: 'Parola',
         rulesKey: 'pass',
         type: 'text',
-        typeProp: 'password'
+        typeProp: 'password',
+        key: 'pass',
+        value: ''
       }
     ]
   }

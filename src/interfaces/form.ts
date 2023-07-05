@@ -5,4 +5,6 @@ export interface IFormField {
   type: string
   typeProp?: string
   prependIcon?: string
+  key: string
+  value: string
 }

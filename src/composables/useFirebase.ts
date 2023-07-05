@@ -13,4 +13,8 @@ const db = getFirestore(app)
 
 auth.useDeviceLanguage()
 
-export { app, analytics, auth, db }
+// workaround to using Admin SDK
+const secondaryApp = initializeApp(firebaseConfig, 'Secondary')
+const secondAuth = getAuth(secondaryApp)
+
+export { app, analytics, auth, db, secondAuth }

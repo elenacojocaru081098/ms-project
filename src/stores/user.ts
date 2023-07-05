@@ -6,8 +6,8 @@ import { defineStore } from 'pinia'
 export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
   // logged user data
   const user = ref<IUser>()
-  const operationType = ref()
-  const providerId = ref<string | null>()
+  const operationType = ref<'link' | 'reauthenticate' | 'signIn'>()
+  const providerId = ref<string | null>(null)
 
   /**
    * Sets the logged user data
@@ -16,12 +16,13 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
    */
   async function setLoggedUserData(u: User | null) {
     // TODO: finish up the function
-    if (u && !user.value?.uid) {
+    if (u && !user.value?.id) {
       const userData = await getUserById(u.uid)
-      setLoggedUser({ uid: user.uid, ...userData })
+      console.log(userData)
+      // setLoggedUser({ ...userData })
     } else {
       // reset user data
-      setLoggedUser()
+      // setLoggedUser()
     }
   }
 
@@ -32,14 +33,27 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
    */
   async function getUserById(uid: string) {
     const user = await getDoc(doc(db, 'users', uid))
-    return user.data
+    return user.data()
   }
 
   function setLoggedUser(u: IUser) {
-    // TODO: assign all fields
+    user.value = { ...u }
+  }
+
+  function setOperationType(o: 'link' | 'reauthenticate' | 'signIn') {
+    operationType.value = o
+  }
+
+  function setProviderId(p: string | null): boolean {
+    if (!p) return false
+
+    providerId.value = p
+    return true
   }
 
   return {
-    setLoggedUserData
+    setLoggedUserData,
+    setOperationType,
+    setProviderId
   }
 })

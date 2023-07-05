@@ -15,7 +15,8 @@ let haveToInitializeApp: boolean = false
 
 function createVueApp() {
   app = createApp(MSApp)
-  app.use(createPinia())
+  const pinia = createPinia()
+  app.use(pinia)
 
   haveToInitializeApp = true
 }
@@ -25,12 +26,13 @@ function initializeApp() {
   app?.use(router)
 
   app?.mount('#app')
+  haveToInitializeApp = false
 }
 
 onAuthStateChanged(auth, (user) => {
-  const { setLoggedUserData } = useUserStore()
-
   !app && createVueApp()
-  setLoggedUserData(user)
   haveToInitializeApp && initializeApp()
+
+  // const { setLoggedUserData } = useUserStore()
+  // user && setLoggedUserData(user)
 })
