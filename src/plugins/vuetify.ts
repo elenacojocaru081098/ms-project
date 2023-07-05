@@ -3,6 +3,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 
+// custom light theme colors
 export const CUSTOM_LIGHT_COLORS = {
   primary: '#0062a1',
   'on-primary': '#ffffff',
@@ -29,6 +30,7 @@ export const CUSTOM_LIGHT_COLORS = {
   'on-error-container': '#410002'
 }
 
+// custom dark theme colors
 export const CUSTOM_DARK_COLORS = {
   primary: '#9ccaff',
   'on-primary': '#003256',

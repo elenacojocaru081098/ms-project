@@ -14,6 +14,7 @@ const db = getFirestore(app)
 auth.useDeviceLanguage()
 
 // workaround to using Admin SDK
+// second app is only used for registering new accounts by admins
 const secondaryApp = initializeApp(firebaseConfig, 'Secondary')
 const secondAuth = getAuth(secondaryApp)
 

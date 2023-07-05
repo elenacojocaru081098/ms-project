@@ -36,14 +36,29 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
     return user.data()
   }
 
+  /**
+   * Sets the user's data
+   *
+   * @param { IUser } u
+   */
   function setLoggedUser(u: IUser) {
     user.value = { ...u }
   }
 
+  /**
+   * Sets the operation type
+   *
+   * @param { 'link' | 'reauthenticate' | 'signIn' } o Operation type
+   */
   function setOperationType(o: 'link' | 'reauthenticate' | 'signIn') {
     operationType.value = o
   }
 
+  /**
+   * Sets the provider id
+   *
+   * @param { string | null } p Provider id
+   */
   function setProviderId(p: string | null): boolean {
     if (!p) return false
 

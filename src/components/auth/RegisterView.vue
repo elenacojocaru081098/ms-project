@@ -4,15 +4,21 @@ const registerRules = validation.getRegisterRules()
 const formFields = ref(useFormStructure().getRegisterForm())
 const valid = ref<boolean | null>(null)
 
+/**
+ * Submits the register form after clicking on the button
+ */
 function submitRegisterForm() {
   if (!valid.value) return
 
   const { handleEmailRegister } = useAuthStore()
-  let data: Record<string, string> = {}
 
+  // construct the data object from the form fields
+  let data: Record<string, string> = {}
   formFields.value.forEach((f) => (data[f.key] = f.value))
   data.gender = extractGenderFromPNC(data.pnc)
   data.birthdate = extractBirthdateFromPNC(data.pnc)
+
+  // try to register a new account
   handleEmailRegister(data)
 }
 </script>

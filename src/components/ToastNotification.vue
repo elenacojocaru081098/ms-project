@@ -9,6 +9,7 @@ const toast = ref<IBusToast>({
   color: ''
 })
 
+// trigger toast notification when an event is emitted
 busToast.on((e: IBusToast) => {
   toast.value.show = true
   toast.value.text = e.text

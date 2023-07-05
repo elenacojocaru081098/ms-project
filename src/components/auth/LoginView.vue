@@ -4,13 +4,19 @@ const loginRules = validation.getLoginRules()
 const formFields = ref(useFormStructure().getLoginForm())
 const valid = ref<boolean | null>(null)
 
+/**
+ * Submits the login form when clicking on the button
+ */
 function submitLoginForm() {
   if (!valid.value) return
 
   const { handleEmailLogin } = useAuthStore()
-  let data: Record<string, string> = {}
 
+  // construct the data object from the form fields
+  let data: Record<string, string> = {}
   formFields.value.forEach((f) => (data[f.key] = f.value))
+
+  // try to login
   handleEmailLogin(data.email, data.pass)
 }
 </script>
