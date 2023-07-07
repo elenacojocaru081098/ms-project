@@ -1,1 +1,3 @@
-<template>bamboozle</template>
+<template>
+  <!-- TODO: create manage users page -->
+</template>

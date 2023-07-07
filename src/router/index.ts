@@ -9,12 +9,8 @@ const router = createRouter({
       path: '/dist/sidebar/index.html',
       redirect: '/'
     },
-    {
-      path: '/',
-      name: 'Dashboard',
-      component: () => import('~/pages/DashboardPage.vue')
-    },
-    ...authRoutes
+    ...authRoutes,
+    ...generalRoutes
   ]
 })
 
