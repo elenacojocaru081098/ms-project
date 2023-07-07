@@ -15,7 +15,7 @@ const router = createRouter({
 
 // navigation guards
 router.beforeEach((to: RouteLocationNormalized) => {
-  if (to.name !== 'Auth') return { name: 'Auth' }
+  // if (to.name !== 'Auth') return { name: 'Auth' }
 })
 
 export default router

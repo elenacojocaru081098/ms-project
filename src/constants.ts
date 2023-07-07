@@ -13,7 +13,9 @@ const NOTIFICATION_MESSAGES = {
   LOGIN_FAILED: 'Date de autentificare incorecte',
   LOGIN_SUCCEEDED: 'Autentificarea s-a facut cu success',
   REGISTER_FAILED: 'Crearea contului a esuat',
-  REGISTER_SUCCEEDED: 'Cont creat cu succes'
+  REGISTER_SUCCEEDED: 'Cont creat cu succes',
+  EMAIL_NOT_FOUND: 'Email inexistent',
+  EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei'
 }
 
 // keys for all the stores

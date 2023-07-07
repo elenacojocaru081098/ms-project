@@ -76,6 +76,20 @@ export function useValidationRules() {
   }
 
   /**
+   * Login form validation rules
+   */
+  function getForgotRules() {
+    return {
+      email: [
+        (value: string) => {
+          if (value) return true
+          return 'Emailul este obligatoriu'
+        }
+      ]
+    }
+  }
+
+  /**
    * Field validation rules
    */
   function getValidationRules(rulesSet: any, key: string | undefined) {
@@ -85,6 +99,7 @@ export function useValidationRules() {
   return {
     getRegisterRules,
     getLoginRules,
+    getForgotRules,
     getValidationRules
   }
 }

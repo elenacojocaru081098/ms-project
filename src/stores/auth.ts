@@ -1,12 +1,20 @@
 import { defineStore } from 'pinia'
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut
+} from 'firebase/auth'
 import type { IBusToast } from '@/interfaces/bus_events'
 import { doc, setDoc } from 'firebase/firestore'
 import { CUSTOM_LIGHT_COLORS } from '@/plugins/vuetify'
 
 export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
   // auth page (login | register)
-  const page = ref<'login' | 'register'>('login')
+  const page = ref<'login' | 'register' | 'forgot'>('login')
+
+  // bus for handling the notifications
+  const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
 
   const { addTimestamps } = useDbInfo()
 
@@ -17,8 +25,6 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
    * @param { string } p Password
    */
   async function handleEmailRegister(data: any) {
-    const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
-
     try {
       const userCreds = await createUserWithEmailAndPassword(secondAuth, data.email, data.pnc)
 
@@ -44,6 +50,8 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
         text: NOTIFICATION_MESSAGES.REGISTER_SUCCEEDED,
         color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
+
+      // TODO: reset form
     } catch (e: any) {
       console.error(e.message)
 
@@ -62,7 +70,6 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
    */
   async function handleEmailLogin(e: string, p: string) {
     const { setOperationType, setProviderId } = useUserStore()
-    const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
 
     try {
       const userCreds = await signInWithEmailAndPassword(auth, e, p)
@@ -74,6 +81,8 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
         text: NOTIFICATION_MESSAGES.LOGIN_SUCCEEDED,
         color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
+
+      // TODO: redirect to dashboard
     } catch (e: any) {
       console.error(e.message)
 
@@ -84,9 +93,40 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     }
   }
 
+  async function resetPassword(e: string) {
+    try {
+      await sendPasswordResetEmail(auth, e)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.EMAIL_SENT_FORGOT_PASS,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+    } catch (e: any) {
+      console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.EMAIL_NOT_FOUND,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+    }
+  }
+
+  // async function
+
+  /**
+   * Sets the auth section view we want to see
+   *
+   * @param { 'login' | 'register' | 'forgot' } p Page to load
+   */
+  function setAuthPage(p: 'login' | 'register' | 'forgot') {
+    page.value = p
+  }
+
   return {
     page,
     handleEmailRegister,
-    handleEmailLogin
+    handleEmailLogin,
+    resetPassword,
+    setAuthPage
   }
 })

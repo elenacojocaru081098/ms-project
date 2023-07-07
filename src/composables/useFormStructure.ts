@@ -85,8 +85,24 @@ export function useFormStructure() {
     ]
   }
 
+  /**
+   * Forgot password form structure
+   */
+  function getForgotForm(): Array<IFormField> {
+    return [
+      {
+        label: 'Email',
+        rulesKey: 'email',
+        type: 'text',
+        key: 'email',
+        value: ''
+      }
+    ]
+  }
+
   return {
     getRegisterForm,
-    getLoginForm
+    getLoginForm,
+    getForgotForm
   }
 }

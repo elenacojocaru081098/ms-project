@@ -1,33 +1,32 @@
 <script setup lang="ts">
 const validation = useValidationRules()
-const loginRules = validation.getLoginRules()
-const formFields = ref(useFormStructure().getLoginForm())
+const emailRules = validation.getForgotRules()
+const formFields = ref(useFormStructure().getForgotForm())
 const valid = ref<boolean | null>(null)
-const { setAuthPage, handleEmailLogin } = useAuthStore()
+const { setAuthPage, resetPassword } = useAuthStore()
 
 /**
  * Submits the login form when clicking on the button
  */
-function submitLoginForm() {
+function forgotPassword() {
   if (!valid.value) return
 
   // construct the data object from the form fields
   let data: Record<string, string> = {}
   formFields.value.forEach((f) => (data[f.key] = f.value))
 
-  // try to login
-  handleEmailLogin(data.email, data.pass)
+  resetPassword(data.email)
 }
 </script>
 
 <template>
-  <v-card-item prepend-icon="mdi-login-variant" density="compact">
-    <v-card-title tag="section">Autentificare</v-card-title>
+  <v-card-item prepend-icon="mdi-form-textbox-password" density="compact">
+    <v-card-title tag="section">Resetare parola</v-card-title>
   </v-card-item>
   <v-card-text>
     <v-form
-      id="login-form"
-      @submit.prevent="submitLoginForm"
+      id="forgot-form"
+      @submit.prevent="forgotPassword"
       validate-on="blur"
       v-model:model-value="valid"
     >
@@ -36,7 +35,7 @@ function submitLoginForm() {
           :prepend-inner-icon="field.prependIcon"
           :label="field.label"
           :type="field.typeProp || 'text'"
-          :rules="validation.getValidationRules(loginRules, field.rulesKey)"
+          :rules="validation.getValidationRules(emailRules, field.rulesKey)"
           v-model="field.value"
           density="compact"
           variant="solo-filled"
@@ -44,18 +43,18 @@ function submitLoginForm() {
         ></v-text-field>
       </section>
     </v-form>
-    <p @click="setAuthPage('forgot')">Ai uitat parola?</p>
+    <p @click="setAuthPage('login')">Intra in cont</p>
   </v-card-text>
   <v-card-actions class="justify-end">
     <v-btn
-      form="login-form"
+      form="forgot-form"
       type="submit"
       append-icon="mdi-arrow-right"
       class="px-4"
       variant="elevated"
       color="primary"
     >
-      Intra in cont
+      Trimite email
     </v-btn>
   </v-card-actions>
 </template>
