@@ -109,7 +109,8 @@ export function useFormStructure() {
         rulesKey: 'email',
         type: 'text',
         key: 'email',
-        value: ''
+        value: '',
+        prependIcon: 'mdi-email'
       },
       {
         label: 'Parola',
@@ -117,7 +118,8 @@ export function useFormStructure() {
         type: 'text',
         typeProp: 'password',
         key: 'pass',
-        value: ''
+        value: '',
+        prependIcon: 'mdi-lock'
       }
     ]
   }
@@ -132,7 +134,8 @@ export function useFormStructure() {
         rulesKey: 'email',
         type: 'text',
         key: 'email',
-        value: ''
+        value: '',
+        prependIcon: 'mdi-email'
       }
     ]
   }

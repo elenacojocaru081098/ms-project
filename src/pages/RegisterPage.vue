@@ -7,7 +7,7 @@ const valid = ref<boolean | null>(null)
 /**
  * Submits the register form after clicking on the button
  */
-function submitRegisterForm() {
+async function submitRegisterForm() {
   if (!valid.value) return
 
   const { handleEmailRegister } = useAuthStore()
@@ -19,7 +19,9 @@ function submitRegisterForm() {
   data.birthdate = extractBirthdateFromPNC(data.pnc)
 
   // try to register a new account
-  handleEmailRegister(data)
+  const success = await handleEmailRegister(data)
+
+  if (success) formFields.value.forEach((f) => (f.value = f.type === 'select' ? null : ''))
 }
 </script>
 

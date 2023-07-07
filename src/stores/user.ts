@@ -5,8 +5,8 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
   // logged user data
-  const user = ref<IUser>()
-  const operationType = ref<'link' | 'reauthenticate' | 'signIn'>()
+  const user = ref<IUser | null>(null)
+  const operationType = ref<'link' | 'reauthenticate' | 'signIn' | null>(null)
   const providerId = ref<string | null>(null)
 
   /**
@@ -15,14 +15,11 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
    * @param { User } u User
    */
   async function setLoggedUserData(u: User | null) {
-    // TODO: finish up the function
     if (u && !user.value?.id) {
-      const userData = await getUserById(u.uid)
-      console.log(userData)
-      // setLoggedUser({ ...userData })
+      const userData = (await getUserById(u.uid)) as IUser
+      setLoggedUser(userData)
     } else {
-      // reset user data
-      // setLoggedUser()
+      setLoggedUser()
     }
   }
 
@@ -41,8 +38,12 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
    *
    * @param { IUser } u
    */
-  function setLoggedUser(u: IUser) {
-    user.value = { ...u }
+  function setLoggedUser(u: IUser | null = null) {
+    if (!u) {
+      user.value = null
+      operationType.value = null
+      providerId.value = null
+    } else user.value = { ...u }
   }
 
   /**

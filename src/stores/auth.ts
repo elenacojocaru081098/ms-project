@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { storeToRefs, defineStore } from 'pinia'
 import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
@@ -13,6 +13,10 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
   // auth page (login | register)
   const page = ref<'login' | 'register' | 'forgot'>('login')
 
+  // logged in flag
+  const { user } = storeToRefs(useUserStore())
+  const isLoggedIn = computed(() => !!user.value)
+
   // bus for handling the notifications
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
 
@@ -24,7 +28,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
    * @param { string } e Email
    * @param { string } p Password
    */
-  async function handleEmailRegister(data: any) {
+  async function handleEmailRegister(data: any): Promise<boolean> {
     try {
       const userCreds = await createUserWithEmailAndPassword(secondAuth, data.email, data.pnc)
 
@@ -51,7 +55,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
         color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
 
-      // TODO: reset form
+      return true
     } catch (e: any) {
       console.error(e.message)
 
@@ -59,6 +63,8 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
         text: NOTIFICATION_MESSAGES.REGISTER_FAILED,
         color: CUSTOM_LIGHT_COLORS['error-container']
       })
+
+      return false
     }
   }
 
@@ -81,8 +87,6 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
         text: NOTIFICATION_MESSAGES.LOGIN_SUCCEEDED,
         color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
-
-      // TODO: redirect to dashboard
     } catch (e: any) {
       console.error(e.message)
 
@@ -122,6 +126,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
 
   return {
     page,
+    isLoggedIn,
     handleEmailRegister,
     handleEmailLogin,
     resetPassword,

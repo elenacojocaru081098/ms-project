@@ -39,11 +39,11 @@ function initializeApp() {
  * Firebase baked-in hook
  * Gets triggered when the app loads as well
  */
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
   // check if we need to create and initialize the app
   !app && createVueApp()
   haveToInitializeApp && initializeApp()
 
-  // const { setLoggedUserData } = useUserStore()
-  // user && setLoggedUserData(user)
+  const { setLoggedUserData } = useUserStore()
+  user && (await setLoggedUserData(user))
 })

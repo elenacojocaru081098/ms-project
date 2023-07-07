@@ -9,13 +9,21 @@ const router = createRouter({
       path: '/dist/sidebar/index.html',
       redirect: '/'
     },
+    {
+      path: '/',
+      name: 'Dashboard',
+      component: () => import('~/pages/DashboardPage.vue')
+    },
     ...authRoutes
   ]
 })
 
 // navigation guards
-router.beforeEach((to: RouteLocationNormalized) => {
-  // if (to.name !== 'Auth') return { name: 'Auth' }
+router.beforeEach((to) => {
+  const currentUser = auth.currentUser
+
+  if (!currentUser && to.path !== '/auth/login') return { path: '/auth/login' }
+  else if (currentUser && to.path === '/auth/login') return { path: '/' }
 })
 
 export default router
