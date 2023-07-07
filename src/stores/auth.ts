@@ -111,8 +111,6 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     }
   }
 
-  // async function
-
   /**
    * Sets the auth section view we want to see
    *

@@ -39,7 +39,7 @@ function forgotPassword() {
           v-model="field.value"
           density="compact"
           variant="solo-filled"
-          color="on-background"
+          color="primary"
         ></v-text-field>
       </section>
     </v-form>

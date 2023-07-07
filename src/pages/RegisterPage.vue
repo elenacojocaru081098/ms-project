@@ -42,9 +42,9 @@ function submitRegisterForm() {
           v-model="field.value"
           variant="solo-filled"
           density="compact"
-          color="on-background"
+          color="primary"
         ></v-text-field>
-        <v-select
+        <v-autocomplete
           v-if="field.type === 'select'"
           :label="field.label"
           :rules="validation.getValidationRules(registerRules, field.rulesKey)"
@@ -53,7 +53,8 @@ function submitRegisterForm() {
           variant="solo-filled"
           density="compact"
           color="on-background"
-        ></v-select>
+          theme="light"
+        ></v-autocomplete>
       </section>
     </v-form>
   </v-card-text>
