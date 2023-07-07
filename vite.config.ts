@@ -10,7 +10,7 @@ const baseConfig = getBaseConfig({
   components: {
     dirs: ['src/**/'],
     dts: 'src/components.d.ts',
-    directoryAsNamespace: true,
+    directoryAsNamespace: false,
     globalNamespaces: ['components']
   }
 })

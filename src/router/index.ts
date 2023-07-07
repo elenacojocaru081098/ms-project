@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 import { authRoutes } from './auth'
 
+// initialize the router
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -8,12 +9,21 @@ const router = createRouter({
       path: '/dist/sidebar/index.html',
       redirect: '/'
     },
+    {
+      path: '/',
+      name: 'Dashboard',
+      component: () => import('~/pages/DashboardPage.vue')
+    },
     ...authRoutes
   ]
 })
 
-router.beforeEach((to: RouteLocationNormalized) => {
-  if (to.name !== 'Auth') return { name: 'Auth' }
+// navigation guards
+router.beforeEach((to) => {
+  const currentUser = auth.currentUser
+
+  if (!currentUser && to.path !== '/auth/login') return { path: '/auth/login' }
+  else if (currentUser && to.path === '/auth/login') return { path: '/' }
 })
 
 export default router

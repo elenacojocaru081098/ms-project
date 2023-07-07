@@ -1,6 +1,7 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
   "include": [
+    "firebase.config.ts",
     "env.d.ts",
     "src/**/*",
     "src/**/*.vue",

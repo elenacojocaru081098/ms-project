@@ -1,35 +1,49 @@
-import { createApp } from 'vue'
+import { createApp, type App } from 'vue'
 import { createPinia } from 'pinia'
 
 import 'vuetify/styles'
-import { createVuetify } from 'vuetify'
-import * as components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
-import { aliases, mdi } from 'vuetify/iconsets/mdi'
+import vuetify from '~/plugins/vuetify'
 import '@mdi/font/css/materialdesignicons.min.css'
 
-import App from './App.vue'
+import MSApp from './MSApp.vue'
 import router from './router'
+import { auth } from './composables/useFirebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
-const vuetify = createVuetify({
-  components,
-  directives,
-  theme: {
-    defaultTheme: 'light'
-  },
-  icons: {
-    defaultSet: 'mdi',
-    aliases,
-    sets: {
-      mdi
-    }
-  }
+let app: App<Element> | null = null
+let haveToInitializeApp: boolean = false
+
+/**
+ * Creates a new vue app and marks it as ready to be initialized
+ */
+function createVueApp() {
+  app = createApp(MSApp)
+  const pinia = createPinia()
+  app.use(pinia)
+
+  haveToInitializeApp = true
+}
+
+/**
+ * Initializes and mounts the vue app
+ */
+function initializeApp() {
+  app?.use(vuetify)
+  app?.use(router)
+
+  app?.mount('#app')
+  haveToInitializeApp = false
+}
+
+/**
+ * Firebase baked-in hook
+ * Gets triggered when the app loads as well
+ */
+onAuthStateChanged(auth, async (user) => {
+  // check if we need to create and initialize the app
+  !app && createVueApp()
+  haveToInitializeApp && initializeApp()
+
+  const { setLoggedUserData } = useUserStore()
+  user && (await setLoggedUserData(user))
 })
-
-const app = createApp(App)
-
-app.use(vuetify)
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
