@@ -97,6 +97,11 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     }
   }
 
+  async function logout() {
+    await signOut(auth)
+    router.push({ path: '/auth/login' })
+  }
+
   async function resetPassword(e: string) {
     try {
       await sendPasswordResetEmail(auth, e)
@@ -129,6 +134,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     isLoggedIn,
     handleEmailRegister,
     handleEmailLogin,
+    logout,
     resetPassword,
     setAuthPage
   }

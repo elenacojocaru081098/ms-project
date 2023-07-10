@@ -1,27 +1,45 @@
 <script setup lang="ts">
+import type { IUser } from '@/interfaces/user'
+import { storeToRefs } from 'pinia'
+
 const openNav = ref<boolean>(false)
+const { user } = storeToRefs(useUserStore())
+const { getFullNameRole } = useUsers()
+const { logout } = useAuthStore()
+
+const userInfo = computed(() => user.value && getFullNameRole(user.value as IUser))
 </script>
 
 <template>
   <v-app-bar scroll-behavior="hide" color="primary-container">
-    <template v-slot:prepend>
+    <template #prepend>
       <v-app-bar-nav-icon @click="openNav = !openNav"></v-app-bar-nav-icon>
     </template>
     <v-app-bar-title>Aplicatie MS</v-app-bar-title>
+    <template #append>
+      <v-btn icon @click="logout()"><v-icon>mdi-logout-variant</v-icon></v-btn>
+    </template>
   </v-app-bar>
 
-  <!-- TODO: add own content in navigation -->
   <v-navigation-drawer v-model="openNav" temporary>
     <v-list-item
-      prepend-avatar="https://randomuser.me/api/portraits/men/78.jpg"
-      title="John Leider"
+      density="compact"
+      prepend-icon="mdi-cog"
+      :title="userInfo"
+      :subtitle="user?.personal_info.email"
+      class="py-6"
     ></v-list-item>
 
     <v-divider></v-divider>
 
-    <v-list density="compact" nav>
-      <v-list-item prepend-icon="mdi-view-dashboard" title="Home" value="home"></v-list-item>
-      <v-list-item prepend-icon="mdi-forum" title="About" value="about"></v-list-item>
+    <v-list class="py-4" nav>
+      <v-list-item
+        density="compact"
+        prepend-icon="mdi-account-supervisor"
+        title="Gestionare utilizatori"
+        subtitle="Creati, editati & stergeti"
+        to="/users"
+      ></v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>

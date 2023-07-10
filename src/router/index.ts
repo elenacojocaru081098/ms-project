@@ -10,12 +10,16 @@ const router = createRouter({
       redirect: '/'
     },
     ...authRoutes,
-    ...generalRoutes
+    {
+      path: '/',
+      component: () => import('~/layouts/DefaultLayout.vue'),
+      children: [...usersRoutes]
+    }
   ]
 })
 
 // navigation guards
-router.beforeEach((to) => {
+router.beforeEach((to: RouteLocationNormalized) => {
   const currentUser = auth.currentUser
 
   if (!currentUser && to.path !== '/auth/login') return { path: '/auth/login' }

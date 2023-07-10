@@ -15,12 +15,15 @@ const NOTIFICATION_MESSAGES = {
   REGISTER_FAILED: 'Crearea contului a esuat',
   REGISTER_SUCCEEDED: 'Cont creat cu succes',
   EMAIL_NOT_FOUND: 'Email inexistent',
-  EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei'
+  EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei',
+  ACCOUNT_ACTIVATED: 'Cont activat cu succes',
+  ACCOUNT_ACTIVATED_FAIL: 'Contul nu s-a putut activa'
 }
 
 // keys for all the stores
 const PINIA_STORE_KEYS = {
   AUTH: 'ms:pinia-store:Auth',
+  DIALOG: 'ms:pinia-store:Dialog',
   USER: 'ms:pinia-store:User'
 }
 

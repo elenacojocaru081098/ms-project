@@ -44,6 +44,11 @@ onAuthStateChanged(auth, async (user) => {
   !app && createVueApp()
   haveToInitializeApp && initializeApp()
 
-  const { setLoggedUserData } = useUserStore()
-  user && (await setLoggedUserData(user))
+  if (user) {
+    const { setLoggedUserData } = useUserStore()
+    await setLoggedUserData(user)
+
+    const curPath = router.currentRoute.value.path
+    if (curPath === '/auth/login') router.push({ path: '/' })
+  }
 })

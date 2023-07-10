@@ -2,6 +2,8 @@
   <NavigationBar />
   <v-main>
     <NavigationMenu />
-    <RouterView />
+    <section class="main-section pa-4">
+      <RouterView />
+    </section>
   </v-main>
 </template>
