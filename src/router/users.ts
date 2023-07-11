@@ -6,5 +6,12 @@ export const usersRoutes = [
     components: {
       default: () => import('~/pages/UsersPage.vue')
     }
+  },
+  {
+    path: '/users/:id',
+    name: 'Edit User',
+    components: {
+      default: () => import('~/pages/EditUserPage.vue')
+    }
   }
 ]

@@ -11,7 +11,7 @@ const userInfo = computed(() => user.value && getFullNameRole(user.value as IUse
 </script>
 
 <template>
-  <v-app-bar scroll-behavior="hide" color="primary-container">
+  <v-app-bar scroll-behavior="hide" color="primary">
     <template #prepend>
       <v-app-bar-nav-icon @click="openNav = !openNav"></v-app-bar-nav-icon>
     </template>
@@ -25,7 +25,7 @@ const userInfo = computed(() => user.value && getFullNameRole(user.value as IUse
     <v-list-item
       density="compact"
       prepend-icon="mdi-cog"
-      :title="userInfo"
+      :title="(userInfo as string)"
       :subtitle="user?.personal_info.email"
       class="py-6"
     ></v-list-item>

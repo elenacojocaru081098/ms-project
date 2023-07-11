@@ -1,7 +1,5 @@
-import type { IBusToast } from '@/interfaces/bus_events'
 import type { IUser } from '@/interfaces/user'
 import type { User } from 'firebase/auth'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
@@ -16,8 +14,10 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
    * @param { User } u User
    */
   async function setLoggedUserData(u: User | null) {
+    const { activateAccount, getUserById } = useUsersStore()
+
     if (u && !user.value?.id) {
-      const userData = (await getUserById(u.uid)) as IUser
+      const userData = await getUserById(u.uid)
 
       if (userData.status === 'Pending') {
         userData.status = 'Activated'
@@ -28,42 +28,6 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
     } else {
       setLoggedUser()
     }
-  }
-
-  /**
-   * Activates a user account
-   *
-   * @param { string } uid  ID of the account to activate
-   */
-  async function activateAccount(uid: string) {
-    const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
-
-    try {
-      const user = doc(db, 'users', uid)
-      await updateDoc(user, { status: 'Activated' })
-
-      busToast.emit({
-        text: NOTIFICATION_MESSAGES.ACCOUNT_ACTIVATED,
-        color: CUSTOM_LIGHT_COLORS['secondary-container']
-      })
-    } catch (e: any) {
-      console.error(e.message)
-
-      busToast.emit({
-        text: NOTIFICATION_MESSAGES.ACCOUNT_ACTIVATED_FAIL,
-        color: CUSTOM_LIGHT_COLORS['error-container']
-      })
-    }
-  }
-
-  /**
-   * Gets a user by their id
-   *
-   * @param { string } uid The db user id
-   */
-  async function getUserById(uid: string) {
-    const user = await getDoc(doc(db, 'users', uid))
-    return { id: user.id, ...user.data() }
   }
 
   /**

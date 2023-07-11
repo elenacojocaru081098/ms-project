@@ -5,7 +5,8 @@ const BUS_EVENTS = {
 
 // various constants
 const CONSTANTS = {
-  NOTIFICATION_TIMEOUT: 2000 // ms
+  NOTIFICATION_TIMEOUT: 2000, // ms
+  PROMPT_DELETE: 'DELETE'
 }
 
 // toast notification messages
@@ -17,14 +18,17 @@ const NOTIFICATION_MESSAGES = {
   EMAIL_NOT_FOUND: 'Email inexistent',
   EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei',
   ACCOUNT_ACTIVATED: 'Cont activat cu succes',
-  ACCOUNT_ACTIVATED_FAIL: 'Contul nu s-a putut activa'
+  ACCOUNT_ACTIVATED_FAIL: 'Contul nu s-a putut activa',
+  ACCOUNT_UPDATED: 'Cont actualizat cu succes',
+  ACCOUNT_UPDATED_FAIL: 'Contul nu s-a putut actualiza'
 }
 
 // keys for all the stores
 const PINIA_STORE_KEYS = {
   AUTH: 'ms:pinia-store:Auth',
   DIALOG: 'ms:pinia-store:Dialog',
-  USER: 'ms:pinia-store:User'
+  USER: 'ms:pinia-store:User',
+  USERS: 'ms:pinia-store:Users'
 }
 
 export { BUS_EVENTS, CONSTANTS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS }
