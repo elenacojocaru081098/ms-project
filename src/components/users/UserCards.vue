@@ -74,6 +74,8 @@ onMounted(async () => {
 </script>
 
 <template>
+  <!-- TODO: show account status -->
+  <!-- TODO: implement promote/demote user -->
   <v-card density="compact" v-for="user in filteredUsers" :key="user.id">
     <v-card-item prepend-icon="mdi-account" density="compact">
       <v-card-title tag="section">{{ getFullNameRole(user as IUser) }}</v-card-title>

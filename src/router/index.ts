@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
-import { authRoutes } from './auth'
 
 // initialize the router
 const router = createRouter({

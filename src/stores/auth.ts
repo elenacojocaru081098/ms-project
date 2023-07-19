@@ -10,8 +10,8 @@ import { doc, setDoc } from 'firebase/firestore'
 import { CUSTOM_LIGHT_COLORS } from '@/plugins/vuetify'
 
 export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
-  // auth page (login | register)
-  const page = ref<'login' | 'register' | 'forgot'>('login')
+  // auth page (login | forgot)
+  const page = ref<'login' | 'forgot'>('login')
 
   // logged in flag
   const { user } = storeToRefs(useUserStore())
@@ -123,9 +123,9 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
   /**
    * Sets the auth section view we want to see
    *
-   * @param { 'login' | 'register' | 'forgot' } p Page to load
+   * @param { 'login' | 'forgot' } p Page to load
    */
-  function setAuthPage(p: 'login' | 'register' | 'forgot') {
+  function setAuthPage(p: 'login' | 'forgot') {
     page.value = p
   }
 
