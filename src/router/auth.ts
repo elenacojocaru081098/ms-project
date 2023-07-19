@@ -19,6 +19,13 @@ export const authRoutes = [
         components: {
           default: () => import('~/pages/RegisterPage.vue')
         }
+      },
+      {
+        path: 'password',
+        name: 'Change Password',
+        components: {
+          default: () => import('~/pages/ChangePasswordPage.vue')
+        }
       }
     ]
   }
