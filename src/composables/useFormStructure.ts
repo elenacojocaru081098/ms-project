@@ -125,6 +125,23 @@ export function useFormStructure() {
   }
 
   /**
+   * Change password form structure
+   */
+  function getPasswordForm(): Array<IFormField> {
+    return [
+      {
+        label: 'Parola Noua',
+        rulesKey: 'pass',
+        type: 'text',
+        typeProp: 'password',
+        key: 'pass',
+        value: '',
+        prependIcon: 'mdi-lock'
+      }
+    ]
+  }
+
+  /**
    * Forgot password form structure
    */
   function getForgotForm(): Array<IFormField> {
@@ -143,6 +160,7 @@ export function useFormStructure() {
   return {
     getRegisterForm,
     getLoginForm,
+    getPasswordForm,
     getForgotForm
   }
 }

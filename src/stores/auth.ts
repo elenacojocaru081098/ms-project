@@ -3,7 +3,8 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signOut
+  signOut,
+  updatePassword
 } from 'firebase/auth'
 import type { IBusToast } from '@/interfaces/bus_events'
 import { doc, setDoc } from 'firebase/firestore'
@@ -97,6 +98,34 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     }
   }
 
+  /**
+   * Changes the current user's password
+   *
+   * @param { string } p The new password
+   */
+  async function changePassword(p: string) {
+    try {
+      await updatePassword(auth.currentUser!, p)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.PASS_CHANGE_SUCCEEDED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+    } catch (e: any) {
+      console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.PASS_CHANGE_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+    }
+  }
+
+  /**
+   * Sends a password reset email
+   *
+   * @param { string } e Email address
+   */
   async function resetPassword(e: string) {
     try {
       await sendPasswordResetEmail(auth, e)
@@ -129,6 +158,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     isLoggedIn,
     handleEmailRegister,
     handleEmailLogin,
+    changePassword,
     resetPassword,
     setAuthPage
   }
