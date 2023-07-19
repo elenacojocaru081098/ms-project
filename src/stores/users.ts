@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IUser } from '@/interfaces/user'
@@ -13,11 +13,17 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
    */
   async function activateAccount(uid: string) {
     try {
+      const { user: userData } = storeToRefs(useUserStore())
+
       const user = doc(db, 'users', uid)
       await updateDoc(user, {
-        status: 'Activated',
+        status: USER_STATUS.ACTIVE,
         ...addModifiedTags()
       })
+
+      userData.value!.status = USER_STATUS.ACTIVE
+
+      router.push({ path: '/' })
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.ACCOUNT_ACTIVATED,
@@ -49,7 +55,27 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
    * @param { string } uid The db user id
    */
   async function softDeleteUserById(uid: string) {
-    // TODO: implement soft delete
+    const u = {
+      status: USER_STATUS.DELETED,
+      ...addModifiedTags()
+    }
+
+    try {
+      const user = doc(db, 'users', uid)
+      await updateDoc(user, { ...u })
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.ACCOUNT_UPDATED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+    } catch (e: any) {
+      console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.ACCOUNT_UPDATED_FAIL,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+    }
   }
 
   /**
@@ -69,20 +95,19 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   async function updateUser(data: any) {
     const u = {
       role: data.role,
-      personal_info: {
-        fname: data.fname,
-        lname: data.lname,
-        email: data.email,
-        pnc: data.pnc,
-        seal: data.seal || null,
-        field: data.field || null
-      },
+      'personal_info.fname': data.fname,
+      'personal_info.lname': data.lname,
+      'personal_info.email': data.email,
+      'personal_info.pnc': data.pnc,
+      'personal_info.seal': data.seal || null,
+      'personal_info.field': data.field || null,
       ...addModifiedTags()
     }
 
     try {
       const user = doc(db, 'users', data.id)
       await updateDoc(user, { ...u })
+      router.push({ path: '/users' })
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.ACCOUNT_UPDATED,
@@ -98,11 +123,36 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     }
   }
 
+  async function changeUserRole(id: string, role: 'Admin' | 'Coordinator' | 'Participant') {
+    const u = {
+      role,
+      ...addModifiedTags()
+    }
+
+    try {
+      const user = doc(db, 'users', id)
+      await updateDoc(user, { ...u })
+      router.push({ path: '/users' })
+
+      if (id === auth.currentUser!.uid) {
+        const { user: userData } = storeToRefs(useUserStore())
+        userData.value!.role = role
+      }
+
+      return true
+    } catch (e: any) {
+      console.error(e.message)
+
+      return false
+    }
+  }
+
   return {
     activateAccount,
     getUserById,
     softDeleteUserById,
     hardDeleteUserById,
-    updateUser
+    updateUser,
+    changeUserRole
   }
 })

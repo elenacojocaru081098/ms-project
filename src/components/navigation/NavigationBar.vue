@@ -7,7 +7,9 @@ const { user } = storeToRefs(useUserStore())
 const { getFullNameRole } = useUsers()
 const { logout } = useAuthStore()
 
-const userInfo = computed(() => user.value && getFullNameRole(user.value as IUser))
+const userInfo = computed(() => {
+  if (user.value) return getFullNameRole(user.value as IUser)
+})
 </script>
 
 <template>

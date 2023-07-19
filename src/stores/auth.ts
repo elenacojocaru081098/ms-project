@@ -113,7 +113,10 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
    */
   async function changePassword(p: string) {
     try {
+      const { activateAccount } = useUsersStore()
+
       await updatePassword(auth.currentUser!, p)
+      activateAccount(auth.currentUser!.uid)
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.PASS_CHANGE_SUCCEEDED,

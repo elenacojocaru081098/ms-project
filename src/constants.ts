@@ -10,9 +10,9 @@ const CONSTANTS = {
 }
 
 const USER_STATUS = {
-  PENDING: 'Pending',
-  ACTIVE: 'Active',
-  DELETED: 'Deleted'
+  PENDING: 'Pending' as 'Pending' | 'Active' | 'Deleted',
+  ACTIVE: 'Active' as 'Pending' | 'Active' | 'Deleted',
+  DELETED: 'Deleted' as 'Pending' | 'Active' | 'Deleted'
 }
 
 // toast notification messages
@@ -28,7 +28,11 @@ const NOTIFICATION_MESSAGES = {
   ACCOUNT_ACTIVATED: 'Cont activat cu succes',
   ACCOUNT_ACTIVATED_FAIL: 'Contul nu s-a putut activa',
   ACCOUNT_UPDATED: 'Cont actualizat cu succes',
-  ACCOUNT_UPDATED_FAIL: 'Contul nu s-a putut actualiza'
+  ACCOUNT_UPDATED_FAIL: 'Contul nu s-a putut actualiza',
+  USER_PROMOTED_SUCCEEDED: 'Utilizator promovat',
+  USER_PROMOTED_FAILED: 'Utilizatorul nu a putut fi promovat',
+  USER_DEMOTED_SUCCEEDED: 'Utilizator retrogradat',
+  USER_DEMOTED_FAILED: 'Utilizatorul nu a putut fi retrogradat'
 }
 
 // keys for all the stores

@@ -1,7 +1,6 @@
 import type { IUser } from '@/interfaces/user'
 import type { User } from 'firebase/auth'
 import { defineStore } from 'pinia'
-import { USER_STATUS } from '@/constants'
 
 export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
   // logged user data
@@ -15,19 +14,16 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
    * @param { User } u User
    */
   async function setLoggedUserData(u: User | null) {
-    const { activateAccount, getUserById } = useUsersStore()
+    const { getUserById } = useUsersStore()
 
     if (u && !user.value?.id) {
       const userData = await getUserById(u.uid)
 
-      if (userData.status === 'Pending') {
-        userData.status = 'Activated'
-        activateAccount(u.uid)
-      }
-
       setLoggedUser(userData)
+      return userData.status
     } else {
       setLoggedUser()
+      return false
     }
   }
 
@@ -42,8 +38,6 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
       operationType.value = null
       providerId.value = null
     } else user.value = { ...u }
-
-    if (u?.status === USER_STATUS.PENDING) router.push({ path: '/auth/password' })
   }
 
   /**
