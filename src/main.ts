@@ -42,8 +42,17 @@ function initializeApp() {
 onAuthStateChanged(auth, async (user) => {
   // check if we need to create and initialize the app
   !app && createVueApp()
+
+  let status: string | boolean = false
+
+  if (user) {
+    const { setLoggedUserData } = useUserStore()
+    status = await setLoggedUserData(user)
+  }
+
   haveToInitializeApp && initializeApp()
 
-  const { setLoggedUserData } = useUserStore()
-  user && (await setLoggedUserData(user))
+  if (status === USER_STATUS.PENDING) {
+    router.push({ path: '/auth/password' })
+  } else if (router.currentRoute.value.path === '/auth/login') router.push({ path: '/' })
 })

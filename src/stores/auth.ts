@@ -11,8 +11,8 @@ import { doc, setDoc } from 'firebase/firestore'
 import { CUSTOM_LIGHT_COLORS } from '@/plugins/vuetify'
 
 export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
-  // auth page (login | register)
-  const page = ref<'login' | 'register' | 'forgot'>('login')
+  // auth page (login | forgot)
+  const page = ref<'login' | 'forgot'>('login')
 
   // logged in flag
   const { user } = storeToRefs(useUserStore())
@@ -99,13 +99,24 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
   }
 
   /**
+   * Signs the user out
+   */
+  async function logout() {
+    await signOut(auth)
+    router.push({ path: '/auth/login' })
+  }
+
+  /**
    * Changes the current user's password
    *
    * @param { string } p The new password
    */
   async function changePassword(p: string) {
     try {
+      const { activateAccount } = useUsersStore()
+
       await updatePassword(auth.currentUser!, p)
+      activateAccount(auth.currentUser!.uid)
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.PASS_CHANGE_SUCCEEDED,
@@ -147,9 +158,9 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
   /**
    * Sets the auth section view we want to see
    *
-   * @param { 'login' | 'register' | 'forgot' } p Page to load
+   * @param { 'login' | 'forgot' } p Page to load
    */
-  function setAuthPage(p: 'login' | 'register' | 'forgot') {
+  function setAuthPage(p: 'login' | 'forgot') {
     page.value = p
   }
 
@@ -158,6 +169,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     isLoggedIn,
     handleEmailRegister,
     handleEmailLogin,
+    logout,
     changePassword,
     resetPassword,
     setAuthPage

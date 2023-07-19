@@ -11,7 +11,7 @@ export interface IPersonalInfo {
 
 export interface IUser {
   id: string
-  type: 'Admin' | 'Coordinator' | 'Participant'
+  role: 'Admin' | 'Coordinator' | 'Participant'
   status: 'Pending' | 'Active' | 'Deleted'
   personal_info: IPersonalInfo
 }

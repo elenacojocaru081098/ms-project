@@ -5,13 +5,14 @@ const BUS_EVENTS = {
 
 // various constants
 const CONSTANTS = {
-  NOTIFICATION_TIMEOUT: 2000 // ms
+  NOTIFICATION_TIMEOUT: 2000, // ms
+  PROMPT_DELETE: 'DELETE'
 }
 
 const USER_STATUS = {
-  PENDING: 'Pending',
-  ACTIVE: 'Active',
-  DELETED: 'Deleted'
+  PENDING: 'Pending' as 'Pending' | 'Active' | 'Deleted',
+  ACTIVE: 'Active' as 'Pending' | 'Active' | 'Deleted',
+  DELETED: 'Deleted' as 'Pending' | 'Active' | 'Deleted'
 }
 
 // toast notification messages
@@ -23,13 +24,23 @@ const NOTIFICATION_MESSAGES = {
   PASS_CHANGE_SUCCEEDED: 'Parola a fost schimbata',
   PASS_CHANGE_FAILED: 'Parola nu a putut fi schimbata',
   EMAIL_NOT_FOUND: 'Email inexistent',
-  EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei'
+  EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei',
+  ACCOUNT_ACTIVATED: 'Cont activat cu succes',
+  ACCOUNT_ACTIVATED_FAIL: 'Contul nu s-a putut activa',
+  ACCOUNT_UPDATED: 'Cont actualizat cu succes',
+  ACCOUNT_UPDATED_FAIL: 'Contul nu s-a putut actualiza',
+  USER_PROMOTED_SUCCEEDED: 'Utilizator promovat',
+  USER_PROMOTED_FAILED: 'Utilizatorul nu a putut fi promovat',
+  USER_DEMOTED_SUCCEEDED: 'Utilizator retrogradat',
+  USER_DEMOTED_FAILED: 'Utilizatorul nu a putut fi retrogradat'
 }
 
 // keys for all the stores
 const PINIA_STORE_KEYS = {
   AUTH: 'ms:pinia-store:Auth',
-  USER: 'ms:pinia-store:User'
+  DIALOG: 'ms:pinia-store:Dialog',
+  USER: 'ms:pinia-store:User',
+  USERS: 'ms:pinia-store:Users'
 }
 
 export { BUS_EVENTS, CONSTANTS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS, USER_STATUS }

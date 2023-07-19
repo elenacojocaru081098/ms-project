@@ -1,8 +1,7 @@
 <template>
   <v-app>
-    <v-main>
-      <ToastNotification />
-      <RouterView />
-    </v-main>
+    <ToastNotification />
+    <DialogBox />
+    <RouterView />
   </v-app>
 </template>
