@@ -2,6 +2,7 @@ import type { IUser } from '@/interfaces/user'
 import type { User } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { defineStore } from 'pinia'
+import { USER_STATUS } from '@/constants'
 
 export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
   // logged user data
@@ -44,6 +45,8 @@ export const useUserStore = defineStore(PINIA_STORE_KEYS.USER, () => {
       operationType.value = null
       providerId.value = null
     } else user.value = { ...u }
+
+    if (u?.status === USER_STATUS.PENDING) router.push({ path: '/auth/password' })
   }
 
   /**

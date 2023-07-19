@@ -8,12 +8,20 @@ const CONSTANTS = {
   NOTIFICATION_TIMEOUT: 2000 // ms
 }
 
+const USER_STATUS = {
+  PENDING: 'Pending',
+  ACTIVE: 'Active',
+  DELETED: 'Deleted'
+}
+
 // toast notification messages
 const NOTIFICATION_MESSAGES = {
   LOGIN_FAILED: 'Date de autentificare incorecte',
   LOGIN_SUCCEEDED: 'Autentificarea s-a facut cu success',
   REGISTER_FAILED: 'Crearea contului a esuat',
   REGISTER_SUCCEEDED: 'Cont creat cu succes',
+  PASS_CHANGE_SUCCEEDED: 'Parola a fost schimbata',
+  PASS_CHANGE_FAILED: 'Parola nu a putut fi schimbata',
   EMAIL_NOT_FOUND: 'Email inexistent',
   EMAIL_SENT_FORGOT_PASS: 'S-a trimis email pentru resetarea parolei'
 }
@@ -24,4 +32,4 @@ const PINIA_STORE_KEYS = {
   USER: 'ms:pinia-store:User'
 }
 
-export { BUS_EVENTS, CONSTANTS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS }
+export { BUS_EVENTS, CONSTANTS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS, USER_STATUS }
