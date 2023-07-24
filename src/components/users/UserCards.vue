@@ -1,37 +1,20 @@
 <script setup lang="ts">
 import type { IUser } from '@/interfaces/user'
 import { CONSTANTS } from '@/constants'
-import { computed, ref } from 'vue'
 import type { IBusToast } from '@/interfaces/bus_events'
 
-const { getLowerRoleUsers, getFullNameRole, getFullName } = useUsers()
-
-const users = ref<Array<IUser>>()
-
 const props = defineProps<{
-  searchTerm: string
+  userList: Array<IUser>
 }>()
 
-const { searchTerm } = toRefs(props)
+const emit = defineEmits(['changedUserRole'])
+const { getFullNameRole } = useUsers()
 
 /**
- * Filters the user based on the search query
+ * Deletes a user
+ *
+ * @param uid
  */
-const filteredUsers = computed(() => {
-  const search = searchTerm.value.toLowerCase()
-
-  const filtered = users.value?.filter((u) => {
-    return (
-      u.personal_info.email.includes(search) ||
-      u.personal_info.pnc.includes(search) ||
-      u.status.includes(search) ||
-      getFullName(u).toLowerCase().includes(search)
-    )
-  })
-
-  return filtered
-})
-
 function deleteUser(uid: string) {
   useUsersStore().softDeleteUserById(uid)
 }
@@ -74,11 +57,13 @@ function promptAction(act: string, u?: IUser) {
  * @param { string } uid
  */
 function getUserRole(uid: string) {
-  return users.value!.find((u) => u.id === uid)!.role
+  return props.userList.find((u) => u.id === uid)!.role
 }
 
 const { changeUserRole } = useUsersStore()
 const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
+
+// TODO: implement promotion limit (a coord can only promote to coord or demote from coord)
 
 /**
  * Promotes the user one level
@@ -99,7 +84,7 @@ async function promoteUser(uid: string) {
         color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
 
-      users.value = await getLowerRoleUsers()
+      emit('changedUserRole')
     } else
       busToast.emit({
         text: NOTIFICATION_MESSAGES.USER_PROMOTED_FAILED,
@@ -131,7 +116,7 @@ async function demoteUser(uid: string) {
         color: CUSTOM_LIGHT_COLORS['secondary-container']
       })
 
-      users.value = await getLowerRoleUsers()
+      emit('changedUserRole')
     } else
       busToast.emit({
         text: NOTIFICATION_MESSAGES.USER_DEMOTED_FAILED,
@@ -165,17 +150,10 @@ function getStatusColor(status: string) {
       return 'surface'
   }
 }
-
-/**
- * Initializes the full user list when the component is mounted
- */
-onMounted(async () => {
-  users.value = await getLowerRoleUsers()
-})
 </script>
 
 <template>
-  <v-card density="compact" v-for="user in filteredUsers" :key="user.id" class="my-2">
+  <v-card density="compact" v-for="user in userList" :key="user.id" class="my-2">
     <v-card-item prepend-icon="mdi-account" density="compact">
       <v-card-title tag="section">
         <span>{{ getFullNameRole(user as IUser) }}</span>

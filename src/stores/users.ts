@@ -6,6 +6,7 @@ import type { IUser } from '@/interfaces/user'
 export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
   const { addModifiedTags } = useDbInfo()
+
   /**
    * Activates a user account
    *
@@ -123,6 +124,12 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     }
   }
 
+  /**
+   * Changes the role of a user
+   *
+   * @param { string } id
+   * @param { 'Admin' | 'Coordinator' | 'Participant' } role
+   */
   async function changeUserRole(id: string, role: 'Admin' | 'Coordinator' | 'Participant') {
     const u = {
       role,

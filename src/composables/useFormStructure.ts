@@ -40,7 +40,7 @@ export function useFormStructure() {
       {
         label: 'Rol',
         rulesKey: 'role',
-        items: ['Participant', 'Coordonator', 'Admin'],
+        items: ['Participant', 'Coordinator', 'Admin'],
         type: 'select',
         key: 'role',
         value: null
@@ -157,10 +157,25 @@ export function useFormStructure() {
     ]
   }
 
+  /**
+   * Create group form structure
+   */
+  function getCreateGroupForm(): Array<IFormField> {
+    return [
+      {
+        label: 'Nume grup',
+        type: 'text',
+        key: 'name',
+        value: ''
+      }
+    ]
+  }
+
   return {
     getRegisterForm,
     getLoginForm,
     getPasswordForm,
-    getForgotForm
+    getForgotForm,
+    getCreateGroupForm
   }
 }

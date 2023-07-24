@@ -37,10 +37,17 @@ const userInfo = computed(() => {
     <v-list class="py-4" nav>
       <v-list-item
         density="compact"
-        prepend-icon="mdi-account-supervisor"
+        prepend-icon="mdi-account"
         title="Gestionare utilizatori"
         subtitle="Creati, editati & stergeti"
         to="/users"
+      ></v-list-item>
+      <v-list-item
+        density="compact"
+        prepend-icon="mdi-account-group"
+        title="Gestionare grupuri"
+        subtitle="Creati, editati & stergeti"
+        to="/groups"
       ></v-list-item>
     </v-list>
   </v-navigation-drawer>
