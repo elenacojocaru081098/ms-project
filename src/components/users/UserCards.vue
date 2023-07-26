@@ -2,10 +2,13 @@
 import type { IUser } from '@/interfaces/user'
 import { CONSTANTS } from '@/constants'
 import type { IBusToast } from '@/interfaces/bus_events'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   userList: Array<IUser>
 }>()
+
+const { user } = storeToRefs(useUserStore())
 
 const emit = defineEmits(['changedUserRole'])
 const { getFullNameRole } = useUsers()
@@ -63,20 +66,28 @@ function getUserRole(uid: string) {
 const { changeUserRole } = useUsersStore()
 const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
 
-// TODO: implement promotion limit (a coord can only promote to coord or demote from coord)
-
 /**
  * Promotes the user one level
  *
  * @param { string } uid Id of the user to promote
  */
 async function promoteUser(uid: string) {
+  const currentUserRole = user.value?.role
   const currentRole = getUserRole(uid)
-  const newRole =
-    currentRole === 'Participant' ? 'Coordinator' : currentRole === 'Coordinator' ? 'Admin' : null
+  let newRole
+
+  if (currentUserRole === 'Participant' || currentRole === 'Admin') newRole = null
+  else {
+    newRole =
+      currentRole === 'Participant'
+        ? 'Coordinator'
+        : currentRole === 'Coordinator' && currentUserRole === 'Admin'
+        ? 'Admin'
+        : null
+  }
 
   if (newRole) {
-    const result = await changeUserRole(uid, newRole)
+    const result = await changeUserRole(uid, newRole as typeof currentRole)
 
     if (result) {
       busToast.emit({
@@ -103,12 +114,22 @@ async function promoteUser(uid: string) {
  * @param { string } uid Id of the user to demote
  */
 async function demoteUser(uid: string) {
+  const currentUserRole = user.value?.role
   const currentRole = getUserRole(uid)
-  const newRole =
-    currentRole === 'Admin' ? 'Coordinator' : currentRole === 'Coordinator' ? 'Participant' : null
+  let newRole
+
+  if (currentUserRole === 'Participant' || currentRole === 'Participant') newRole = null
+  else {
+    newRole =
+      currentRole === 'Coordinator'
+        ? 'Participant'
+        : currentRole === 'Admin' && currentUserRole === 'Admin'
+        ? 'Coordinator'
+        : null
+  }
 
   if (newRole) {
-    const result = await changeUserRole(uid, newRole)
+    const result = await changeUserRole(uid, newRole as typeof currentRole)
 
     if (result) {
       busToast.emit({
