@@ -46,22 +46,43 @@ function promptAction(act: string, g?: IGroup) {
       break
   }
 }
+
+/**
+ * Redirects to edit group page
+ *
+ * @param { string } gid Id of the group to edit
+ */
+function goToEdit(gid: string) {
+  router.push({ path: `/groups/${gid}` })
+}
 </script>
 
 <template>
-  <v-card density="compact" v-for="group in groupList" :key="group.id" class="my-2">
+  <v-card density="compact" v-for="group in props.groupList" :key="group.id" class="my-2">
     <v-card-item prepend-icon="mdi-account-group" density="compact">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ group.name }}</span>
-        <v-btn
-          density="comfortable"
-          size="small"
-          color="error"
-          @click="promptAction(CONSTANTS.PROMPT_DELETE, group)"
-          icon
-        >
-          <v-icon>mdi-trash-can</v-icon>
-        </v-btn>
+        <section class="group-controls">
+          <v-btn
+            density="comfortable"
+            size="small"
+            color="primary"
+            class="mr-2"
+            @click="goToEdit(group.id)"
+            icon
+          >
+            <v-icon>mdi-pencil</v-icon>
+          </v-btn>
+          <v-btn
+            density="comfortable"
+            size="small"
+            color="error"
+            @click="promptAction(CONSTANTS.PROMPT_DELETE, group)"
+            icon
+          >
+            <v-icon>mdi-trash-can</v-icon>
+          </v-btn>
+        </section>
       </v-card-title>
     </v-card-item>
   </v-card>

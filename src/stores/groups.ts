@@ -8,7 +8,8 @@ import {
   collection,
   where,
   getDocs,
-  addDoc
+  addDoc,
+  getDoc
 } from 'firebase/firestore'
 import { storeToRefs, defineStore } from 'pinia'
 
@@ -49,9 +50,10 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    *
    * @param { string } gid The db group id
    */
-  // async function getGroupById(gid: string) {
-  //   return groups.value.find((g) => g.id === gid)
-  // }
+  async function getGroupById(gid: string) {
+    await fetchUserGroups()
+    return groups.value.find((g) => g.id === gid)
+  }
 
   /**
    * Deletes a group by its id (hard)
@@ -64,7 +66,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
       await deleteDoc(group)
 
       const g = groups.value.find((g) => g.id === gid)
-      g && groups.value.splice(groups.value.indexOf(g))
+      g && groups.value.splice(groups.value.indexOf(g), 1)
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.GROUP_DELETED_SUCCEEDED,
@@ -75,6 +77,35 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.GROUP_DELETED_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+    }
+  }
+
+  /**
+   * Updates group info
+   *
+   * @param data
+   */
+  async function updateGroup(data: any) {
+    const g = {
+      name: data.name,
+      users: data.users
+    }
+
+    try {
+      const group = doc(db, 'groups', data.id)
+      await updateDoc(group, { ...g })
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.GROUP_UPDATED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+    } catch (e: any) {
+      console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.GROUP_UPDATED_FAIL,
         color: CUSTOM_LIGHT_COLORS['error-container']
       })
     }
@@ -139,11 +170,29 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     }
   }
 
+  /**
+   * Gets a list with all the members of a group
+   *
+   * @param { string } gid Id of the group
+   */
+  async function fetchGroupMembers(gid: string) {
+    try {
+      const group = await getDoc(doc(db, 'groups', gid))
+      const userIds = group.exists() ? [...group.data().users] : []
+      return userIds
+    } catch (e: any) {
+      console.error(e.message)
+    }
+  }
+
   return {
     groups,
     fetchCurrentUserGroups,
+    getGroupById,
     deleteGroupById,
+    updateGroup,
     updateGroupCoordinators,
-    createGroup
+    createGroup,
+    fetchGroupMembers
   }
 })

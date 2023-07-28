@@ -1,5 +1,14 @@
 import { defineStore, storeToRefs } from 'pinia'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where
+} from 'firebase/firestore'
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IUser } from '@/interfaces/user'
 
@@ -48,6 +57,35 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   async function getUserById(uid: string) {
     const user = await getDoc(doc(db, 'users', uid))
     return { id: user.id, ...user.data() } as IUser
+  }
+
+  /**
+   * Gets all the users with the specified ids
+   *
+   * @param { Array<string> } uids List of ids to check against
+   */
+  async function getUsersByIdList(uids: Array<string>) {
+    const q = query(collection(db, 'users'), where(documentId(), 'in', uids))
+    const qss = await getDocs(q)
+    const userList: {
+      id: string
+      fname: string
+      lname: string
+      field: string
+    }[] = []
+
+    qss.forEach((d) => {
+      const data = d.data()
+
+      userList.push({
+        id: d.id,
+        fname: data.personal_info.fname,
+        lname: data.personal_info.lname,
+        field: data.personal_info.field
+      })
+    })
+
+    return userList
   }
 
   /**
@@ -157,6 +195,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   return {
     activateAccount,
     getUserById,
+    getUsersByIdList,
     softDeleteUserById,
     hardDeleteUserById,
     updateUser,

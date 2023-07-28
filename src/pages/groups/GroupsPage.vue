@@ -21,7 +21,7 @@ function goToCreateGroup() {
 
 const { fetchCurrentUserGroups } = groupsStore
 
-onMounted(() => {
+onBeforeMount(() => {
   fetchCurrentUserGroups()
 })
 </script>

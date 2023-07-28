@@ -36,7 +36,9 @@ const NOTIFICATION_MESSAGES = {
   GROUP_DELETED_SUCCEEDED: 'Grup sters cu succes',
   GROUP_DELETED_FAILED: 'Grupul nu a putut fi sters',
   GROUP_CREATED_SUCCEEDED: 'Grup creat cu succes',
-  GROUP_CREATED_FAILED: 'Grupul nu a putut fi creat'
+  GROUP_CREATED_FAILED: 'Grupul nu a putut fi creat',
+  GROUP_UPDATED: 'Grup actualizat cu succes',
+  GROUP_UPDATED_FAIL: 'Grupul nu s-a putut actualiza'
 }
 
 // keys for all the stores
