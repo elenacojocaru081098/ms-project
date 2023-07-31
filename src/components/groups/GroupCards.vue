@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import type { IGroup } from '@/interfaces/group'
 import { CONSTANTS } from '@/constants'
+import type { IUser } from '@/interfaces/user'
 
 const props = defineProps<{
   groupList: Array<IGroup>
 }>()
+
+const { deleteGroupById, updateGroupCoordinators } = useGroupsStore()
 
 /**
  * Deletes a group
@@ -12,7 +15,7 @@ const props = defineProps<{
  * @param gid
  */
 function deleteGroup(gid: string) {
-  useGroupsStore().deleteGroupById(gid)
+  deleteGroupById(gid)
 }
 
 /**
@@ -55,6 +58,40 @@ function promptAction(act: string, g?: IGroup) {
 function goToEdit(gid: string) {
   router.push({ path: `/groups/${gid}` })
 }
+
+const showCoordsList = ref<boolean>(false)
+const groupCoords = ref<Array<string>>([])
+
+/**
+ * Loads current coordinators
+ */
+async function loadCoordinators(group: IGroup) {
+  showCoordsList.value = !showCoordsList.value
+  groupCoords.value.length = 0
+  groupCoords.value!.push(...group.coords)
+}
+
+/**
+ * Updates the coordinators' list
+ *
+ * @param { IGroup } group
+ */
+function updateCoordsList(group: IGroup) {
+  if (groupCoords.value.length < 1) return
+
+  group.coords.length = 0
+  group.coords.push(...groupCoords.value)
+  updateGroupCoordinators(group.id, group.coords)
+}
+
+const coords = ref<Array<IUser>>([])
+
+/**
+ * Loads all the coordinators
+ */
+onBeforeMount(async () => {
+  coords.value = await useUsersStore().getCoordinators()
+})
 </script>
 
 <template>
@@ -63,6 +100,16 @@ function goToEdit(gid: string) {
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ group.name }}</span>
         <section class="group-controls">
+          <v-btn
+            density="comfortable"
+            size="small"
+            color="tertiary"
+            class="mr-2"
+            @click="loadCoordinators(group)"
+            icon
+          >
+            <v-icon>mdi-transit-transfer</v-icon>
+          </v-btn>
           <v-btn
             density="comfortable"
             size="small"
@@ -84,6 +131,24 @@ function goToEdit(gid: string) {
           </v-btn>
         </section>
       </v-card-title>
+      <v-card-subtitle>
+        {{ group.users.length }} {{ group.users.length === 1 ? 'participant' : 'participanti' }}
+      </v-card-subtitle>
+      <v-card-text v-if="showCoordsList">
+        <v-autocomplete
+          label="Coordonatori"
+          v-model="groupCoords"
+          :items="coords"
+          item-title="personal_info.email"
+          item-value="id"
+          variant="solo-filled"
+          density="compact"
+          chips
+          closable-chips
+          multiple
+          @update:model-value="updateCoordsList(group)"
+        ></v-autocomplete>
+      </v-card-text>
     </v-card-item>
   </v-card>
 </template>

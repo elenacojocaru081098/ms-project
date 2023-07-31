@@ -5,7 +5,7 @@ import type { IBusToast } from '@/interfaces/bus_events'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  userList: Array<IUser>
+  users: Array<IUser>
 }>()
 
 const { user } = storeToRefs(useUserStore())
@@ -60,7 +60,7 @@ function promptAction(act: string, u?: IUser) {
  * @param { string } uid
  */
 function getUserRole(uid: string) {
-  return props.userList.find((u) => u.id === uid)!.role
+  return props.users.find((u) => u.id === uid)!.role
 }
 
 const { changeUserRole } = useUsersStore()
@@ -174,7 +174,7 @@ function getStatusColor(status: string) {
 </script>
 
 <template>
-  <v-card density="compact" v-for="user in userList" :key="user.id" class="my-2">
+  <v-card density="compact" v-for="user in users" :key="user.id" class="my-2">
     <v-card-item prepend-icon="mdi-account" density="compact">
       <v-card-title tag="section">
         <span>{{ getFullNameRole(user as IUser) }}</span>

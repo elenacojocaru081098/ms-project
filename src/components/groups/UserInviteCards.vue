@@ -8,9 +8,10 @@ const props = defineProps<{
         field: string
       }>
     | undefined
+  allowInvite: boolean | undefined
 }>()
 
-defineEmits(['removeUser'])
+defineEmits(['removeUser', 'addUserToGroup'])
 
 function getKey(user: any) {
   return user.fname + user.lname + user.field
@@ -18,12 +19,24 @@ function getKey(user: any) {
 </script>
 
 <template>
-  <v-card density="compact" v-for="user in props.users" :key="getKey(user)" class="my-2">
+  <v-card density="compact" v-for="user in props.users" :key="getKey(user)">
     <v-card-item density="compact">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ `${user.fname} ${user.lname}` }}</span>
         <section class="card-controls">
           <v-btn
+            v-if="allowInvite"
+            density="comfortable"
+            size="small"
+            color="secondary"
+            class="mr-2"
+            @click="$emit('addUserToGroup', user.id)"
+            icon
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+          <v-btn
+            v-else
             density="comfortable"
             size="small"
             color="error"

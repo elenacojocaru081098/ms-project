@@ -64,8 +64,12 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
    *
    * @param { Array<string> } uids List of ids to check against
    */
-  async function getUsersByIdList(uids: Array<string>) {
-    const q = query(collection(db, 'users'), where(documentId(), 'in', uids))
+  async function getUsersByIdList(uids: Array<string>, cond: 'in' | 'not-in' = 'in') {
+    const q = query(
+      collection(db, 'users'),
+      where(documentId(), cond, uids),
+      where('role', '==', 'Participant')
+    )
     const qss = await getDocs(q)
     const userList: {
       id: string
@@ -86,6 +90,19 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     })
 
     return userList
+  }
+
+  /**
+   * Gets all the users that are coordinators
+   */
+  async function getCoordinators() {
+    const q = query(collection(db, 'users'), where('role', '==', 'Coordinator'))
+    const qss = await getDocs(q)
+
+    const users: Array<IUser> = []
+    qss.forEach((d) => users.push({ id: d.id, ...d.data() } as IUser))
+
+    return users
   }
 
   /**
@@ -115,15 +132,6 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
         color: CUSTOM_LIGHT_COLORS['error-container']
       })
     }
-  }
-
-  /**
-   * Deletes a user by their id (hard)
-   *
-   * @param { string } uid The db user id
-   */
-  async function hardDeleteUserById(uid: string) {
-    // TODO: implement hard delete
   }
 
   /**
@@ -196,8 +204,8 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     activateAccount,
     getUserById,
     getUsersByIdList,
+    getCoordinators,
     softDeleteUserById,
-    hardDeleteUserById,
     updateUser,
     changeUserRole
   }

@@ -27,11 +27,13 @@ onBeforeMount(() => {
 </script>
 
 <template>
-  <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta grup" v-model="searchTerm" />
-  <GroupCards :group-list="filteredGroups" />
-  <v-btn class="add-btn" color="secondary-container" @click="goToCreateGroup" icon>
-    <v-icon>mdi-plus</v-icon>
-  </v-btn>
+  <article>
+    <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta grup" v-model="searchTerm" />
+    <GroupCards :group-list="filteredGroups" />
+    <v-btn class="add-btn" color="secondary-container" @click="goToCreateGroup" icon>
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
+  </article>
 </template>
 
 <style lang="scss">

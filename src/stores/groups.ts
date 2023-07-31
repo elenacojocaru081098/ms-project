@@ -8,8 +8,7 @@ import {
   collection,
   where,
   getDocs,
-  addDoc,
-  getDoc
+  addDoc
 } from 'firebase/firestore'
 import { storeToRefs, defineStore } from 'pinia'
 
@@ -119,7 +118,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    */
   async function updateGroupCoordinators(gid: string, cids: Array<string>) {
     const g = {
-      coordinators: cids,
+      coords: cids,
       ...addModifiedTags()
     }
 
@@ -170,21 +169,6 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     }
   }
 
-  /**
-   * Gets a list with all the members of a group
-   *
-   * @param { string } gid Id of the group
-   */
-  async function fetchGroupMembers(gid: string) {
-    try {
-      const group = await getDoc(doc(db, 'groups', gid))
-      const userIds = group.exists() ? [...group.data().users] : []
-      return userIds
-    } catch (e: any) {
-      console.error(e.message)
-    }
-  }
-
   return {
     groups,
     fetchCurrentUserGroups,
@@ -192,7 +176,6 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     deleteGroupById,
     updateGroup,
     updateGroupCoordinators,
-    createGroup,
-    fetchGroupMembers
+    createGroup
   }
 })

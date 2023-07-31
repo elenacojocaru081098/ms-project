@@ -32,7 +32,7 @@ const userInfo = computed(() => {
       class="py-6"
     ></v-list-item>
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <v-list class="py-4" nav>
       <v-list-item
