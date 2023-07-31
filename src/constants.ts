@@ -38,7 +38,9 @@ const NOTIFICATION_MESSAGES = {
   GROUP_CREATED_SUCCEEDED: 'Grup creat cu succes',
   GROUP_CREATED_FAILED: 'Grupul nu a putut fi creat',
   GROUP_UPDATED: 'Grup actualizat cu succes',
-  GROUP_UPDATED_FAIL: 'Grupul nu s-a putut actualiza'
+  GROUP_UPDATED_FAIL: 'Grupul nu s-a putut actualiza',
+  STUDY_CREATED_SUCCEEDED: 'Studiul a fost creat cu succes',
+  STUDY_CREATED_FAILED: 'Studiul nu a putut fi creat'
 }
 
 // keys for all the stores
@@ -46,6 +48,7 @@ const PINIA_STORE_KEYS = {
   AUTH: 'ms:pinia-store:Auth',
   DIALOG: 'ms:pinia-store:Dialog',
   GROUPS: 'ms:pinia-store:Groups',
+  STUDIES: 'ms:pinia-store:Studies',
   USER: 'ms:pinia-store:User',
   USERS: 'ms:pinia-store:Users'
 }

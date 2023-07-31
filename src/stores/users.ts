@@ -64,12 +64,19 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
    *
    * @param { Array<string> } uids List of ids to check against
    */
-  async function getUsersByIdList(uids: Array<string>, cond: 'in' | 'not-in' = 'in') {
-    const q = query(
-      collection(db, 'users'),
-      where(documentId(), cond, uids),
-      where('role', '==', 'Participant')
-    )
+  async function getParticipantsByIdList(uids: Array<string>, cond: 'in' | 'not-in' = 'in') {
+    let q
+    if (cond === 'in' && uids.length === 0) return []
+    else if (cond === 'not-in' && uids.length === 0) {
+      q = query(collection(db, 'users'), where('role', '==', 'Participant'))
+    } else {
+      q = query(
+        collection(db, 'users'),
+        where(documentId(), cond, uids),
+        where('role', '==', 'Participant')
+      )
+    }
+
     const qss = await getDocs(q)
     const userList: {
       id: string
@@ -203,7 +210,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   return {
     activateAccount,
     getUserById,
-    getUsersByIdList,
+    getParticipantsByIdList,
     getCoordinators,
     softDeleteUserById,
     updateUser,

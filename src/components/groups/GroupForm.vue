@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import type { IFormField } from '@/interfaces/form'
+import type { IGroup } from '@/interfaces/group'
 
 const valid = ref<boolean | null>(null)
 const props = defineProps<{
   action: Function
   title: string
   formFields: Array<IFormField>
-  showUsers: boolean
+  newGroup: boolean
+  group: IGroup
 }>()
 
 defineEmits(['showGroupMembers', 'showAllUsers'])
@@ -17,12 +20,111 @@ defineEmits(['showGroupMembers', 'showAllUsers'])
 function submitForm() {
   if (!valid) return
 
-  // construct the data object from the form fields
-  let data: Record<string, string> = {}
-  props.formFields.forEach((f) => (data[f.key] = f.value))
+  const groupName = props.formFields.find((f) => f.key === 'name')
+  activeGroup.value.name = groupName?.value || ''
 
-  props.action(data)
+  props.action()
 }
+
+const memberList = ref<Array<{
+  id: string
+  fname: string
+  lname: string
+  field: string
+}> | null>(null)
+
+const showMemberList = ref<boolean>(!props.newGroup)
+
+/**
+ * Lists the members of the group
+ */
+function listMembers() {
+  showAllUsers.value = false
+  showMemberList.value = !showMemberList.value
+}
+
+const users = ref<Array<{
+  id: string
+  fname: string
+  lname: string
+  field: string
+}> | null>(null)
+
+const showAllUsers = ref<boolean>(props.newGroup)
+
+/**
+ * Lists all users
+ */
+function listUsers() {
+  showMemberList.value = false
+  showAllUsers.value = !showAllUsers.value
+}
+
+const { getCurrentGroupMembers, getAvailableParticipants, updateGroup } = useGroupsStore()
+
+/**
+ * Initializes the memberList and users arrays
+ */
+async function initializeUsersLists() {
+  if (!props.newGroup) memberList.value = await getCurrentGroupMembers()
+
+  users.value = await getAvailableParticipants()
+}
+
+const { currentGroup } = storeToRefs(useGroupsStore())
+const activeGroup = ref<IGroup>(props.newGroup ? props.group : currentGroup.value)
+/**
+ * Removes a user from the group
+ *
+ * @param uid
+ */
+async function removeUser(uid: string) {
+  const uidx = activeGroup.value?.users.indexOf(uid)
+
+  if (uidx === undefined || uidx < 0) return
+
+  activeGroup.value?.users.splice(uidx, 1)
+
+  // update local state
+  const user = memberList.value?.find((u) => u.id === uid)
+
+  if (user) {
+    const midx = memberList.value?.indexOf(user)
+
+    if (midx !== undefined && midx > -1) {
+      memberList.value?.splice(midx, 1)
+      users.value?.push(user)
+    }
+  }
+}
+
+/**
+ * Adds a user to the group
+ *
+ * @param uid
+ */
+async function addUserToGroup(uid: string) {
+  activeGroup.value?.users.push(uid)
+
+  // update local state
+  const user = users.value?.find((u) => u.id === uid)
+
+  if (user) {
+    const uidx = users.value?.indexOf(user)
+
+    if (uidx !== undefined && uidx > -1) {
+      users.value?.splice(uidx, 1)
+      memberList.value?.push(user)
+    }
+  }
+}
+
+/**
+ * Initializes the form when component mounts
+ */
+onMounted(async () => {
+  initializeUsersLists()
+})
 </script>
 
 <template>
@@ -50,10 +152,13 @@ function submitForm() {
           ></v-text-field>
         </section>
       </v-form>
+      <p class="mt-4">
+        {{ memberList?.length || 0 }}
+        {{ memberList?.length === 1 ? 'participant' : 'participanti' }}
+      </p>
     </v-card-text>
     <v-card-actions class="justify-end">
       <v-btn
-        v-if="showUsers"
         density="comfortable"
         size="small"
         form="group-form"
@@ -61,13 +166,13 @@ function submitForm() {
         class="px-4"
         variant="elevated"
         color="tertiary"
-        @click="$emit('showAllUsers')"
+        @click="listUsers"
         icon
       >
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
       <v-btn
-        v-if="showUsers"
+        v-if="!newGroup"
         density="comfortable"
         size="small"
         form="group-form"
@@ -75,7 +180,7 @@ function submitForm() {
         class="px-4"
         variant="elevated"
         color="secondary"
-        @click="$emit('showGroupMembers')"
+        @click="listMembers"
         icon
       >
         <v-icon>mdi-account-group</v-icon>
@@ -94,4 +199,13 @@ function submitForm() {
       </v-btn>
     </v-card-actions>
   </v-card>
+  <UserList
+    class="mt-6"
+    v-show="showMemberList || showAllUsers"
+    :users="showMemberList ? memberList : users"
+    :invite-card="true"
+    :allow-invite="!showMemberList"
+    @remove-user="removeUser"
+    @add-user-to-group="addUserToGroup"
+  />
 </template>

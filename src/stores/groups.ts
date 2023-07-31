@@ -1,5 +1,6 @@
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IGroup } from '@/interfaces/group'
+import type { IUser } from '@/interfaces/user'
 import {
   doc,
   deleteDoc,
@@ -16,27 +17,32 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
   const { addTimestamps, addModifiedTags } = useDbInfo()
   const { user } = storeToRefs(useUserStore())
+  const { getParticipantsByIdList } = useUsersStore()
 
   // groups of the current user
   const groups = ref<Array<IGroup>>([])
 
+  // current group we're working on
+  const currentGroupIndex = ref<number>(0)
+  const currentGroup = computed(() => groups.value[currentGroupIndex.value])
+
   /**
    * Fetches current user's groups
    */
-  function fetchCurrentUserGroups() {
+  async function fetchCurrentUserGroups() {
     if (user.value && user.value.role === 'Admin') groups.value.length = 0
-    else if (user.value) fetchUserGroups()
+    else if (user.value) await fetchUserGroups(user.value)
   }
 
   /**
-   * Fetches the groups of the current user
+   * Fetches the groups of a user
    * If the user's a coordinator, fetches the groups the coordinate
    * otherwise the groups they're a part of
    */
-  async function fetchUserGroups() {
-    const column: string = user.value!.role === 'Coordinator' ? 'coords' : 'users'
+  async function fetchUserGroups(u: IUser) {
+    const column: string = u.role === 'Coordinator' ? 'coords' : 'users'
 
-    const q = query(collection(db, 'groups'), where(column, 'array-contains', user.value!.id))
+    const q = query(collection(db, 'groups'), where(column, 'array-contains', u.id))
 
     const qss = await getDocs(q)
     if (groups.value.length) groups.value.length = 0
@@ -49,9 +55,29 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    *
    * @param { string } gid The db group id
    */
-  async function getGroupById(gid: string) {
-    await fetchUserGroups()
+  function getGroupById(gid: string) {
+    if (!groups.value) fetchCurrentUserGroups()
     return groups.value.find((g) => g.id === gid)
+  }
+
+  /**
+   * Gets the member's list of the current group
+   *
+   * @param gid
+   */
+  async function getCurrentGroupMembers() {
+    const memberIds = currentGroup.value.users || []
+    const memberList = await getParticipantsByIdList(memberIds)
+    return memberList
+  }
+
+  /**
+   * Gets the list with all participants available to be invited in group
+   */
+  async function getAvailableParticipants() {
+    const memberIds = currentGroup.value?.users || []
+    const participants = await getParticipantsByIdList(memberIds, 'not-in')
+    return participants
   }
 
   /**
@@ -81,19 +107,21 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     }
   }
 
+  // TODO: redo this
   /**
    * Updates group info
    *
-   * @param data
+   * @param { IGroup } group
    */
-  async function updateGroup(data: any) {
+  async function updateGroup(group: IGroup) {
     const g = {
-      name: data.name,
-      users: data.users
+      id: group.id,
+      name: group.name,
+      users: group.users
     }
 
     try {
-      const group = doc(db, 'groups', data.id)
+      const group = doc(db, 'groups', g.id)
       await updateDoc(group, { ...g })
 
       busToast.emit({
@@ -143,13 +171,14 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
   /**
    * Creates a new group
    *
-   * @param { string } name
+   * @param { IGroup } group
    */
-  async function createGroup(name: string) {
+  async function createGroup(group: IGroup) {
     try {
       await addDoc(collection(db, 'groups'), {
-        name,
-        coords: [user.value?.id],
+        name: group.name,
+        users: group.users,
+        coords: group.coords,
         ...addTimestamps()
       })
 
@@ -171,8 +200,12 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
 
   return {
     groups,
+    currentGroupIndex,
+    currentGroup,
     fetchCurrentUserGroups,
     getGroupById,
+    getCurrentGroupMembers,
+    getAvailableParticipants,
     deleteGroupById,
     updateGroup,
     updateGroupCoordinators,

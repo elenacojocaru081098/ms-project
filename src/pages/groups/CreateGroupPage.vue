@@ -1,18 +1,37 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+import type { IGroup } from '@/interfaces/group'
+
 const formFields = ref(useFormStructure().getCreateGroupForm())
+
+const { user } = storeToRefs(useUserStore())
 const { createGroup } = useGroupsStore()
 
-function createNewGroup(data: any) {
-  createGroup(data.name)
+const group = ref<IGroup>()
+
+/**
+ * Creates a new group
+ */
+function createNewGroup() {
+  createGroup(group.value!)
 }
+
+onBeforeMount(() => {
+  group.value = {
+    id: '',
+    name: '',
+    users: [],
+    coords: user.value ? [user.value.id] : []
+  }
+})
 </script>
 
 <template>
   <GroupForm
     :action="createNewGroup"
     title="Creare grup"
-    btn="Creeaza grup"
     :form-fields="formFields"
-    :show-users="false"
+    :new-group="true"
+    :group="group!"
   />
 </template>
