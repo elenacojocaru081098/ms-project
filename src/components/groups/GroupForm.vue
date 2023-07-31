@@ -60,7 +60,7 @@ function listUsers() {
   showAllUsers.value = !showAllUsers.value
 }
 
-const { getCurrentGroupMembers, getAvailableParticipants, updateGroup } = useGroupsStore()
+const { getCurrentGroupMembers, getAvailableParticipants } = useGroupsStore()
 
 /**
  * Initializes the memberList and users arrays
