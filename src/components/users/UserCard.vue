@@ -1,17 +1,130 @@
 <script setup lang="ts">
-import type { IUser } from '@/interfaces/user'
 import { CONSTANTS } from '@/constants'
 import type { IBusToast } from '@/interfaces/bus_events'
+import type { IUser } from '@/interfaces/user'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  users: Array<IUser>
+  user: IUser
 }>()
 
-const { user } = storeToRefs(useUserStore())
+/**
+ * Gets the color of the status chip
+ *
+ * @param status
+ */
+function getStatusColor(status: string) {
+  switch (status) {
+    case 'Active':
+      return 'secondary'
+    case 'Pending':
+      return 'primary'
+    case 'Deleted':
+      return 'error'
+    default:
+      return 'surface'
+  }
+}
 
+const { changeUserRole } = useUsersStore()
+const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
 const emit = defineEmits(['changedUserRole'])
+const { user: currentUser } = storeToRefs(useUserStore())
+
+/**
+ * Promotes the user one level
+ *
+ * @param { string } uid Id of the user to promote
+ */
+async function promoteUser(uid: string) {
+  const currentUserRole = currentUser.value?.role
+  const currentRole = props.user.role
+  let newRole
+
+  if (currentUserRole === 'Participant' || currentRole === 'Admin') newRole = null
+  else {
+    newRole =
+      currentRole === 'Participant'
+        ? 'Coordinator'
+        : currentRole === 'Coordinator' && currentUserRole === 'Admin'
+        ? 'Admin'
+        : null
+  }
+
+  if (newRole) {
+    const result = await changeUserRole(uid, newRole as typeof currentRole)
+
+    if (result) {
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.USER_PROMOTED_SUCCEEDED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+
+      emit('changedUserRole')
+    } else
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.USER_PROMOTED_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+  } else
+    busToast.emit({
+      text: NOTIFICATION_MESSAGES.USER_PROMOTED_FAILED,
+      color: CUSTOM_LIGHT_COLORS['error-container']
+    })
+}
+
+/**
+ * Demotes the user one level
+ *
+ * @param { string } uid Id of the user to demote
+ */
+async function demoteUser(uid: string) {
+  const currentUserRole = currentUser.value?.role
+  const currentRole = props.user.role
+  let newRole
+
+  if (currentUserRole === 'Participant' || currentRole === 'Participant') newRole = null
+  else {
+    newRole =
+      currentRole === 'Coordinator'
+        ? 'Participant'
+        : currentRole === 'Admin' && currentUserRole === 'Admin'
+        ? 'Coordinator'
+        : null
+  }
+
+  if (newRole) {
+    const result = await changeUserRole(uid, newRole as typeof currentRole)
+
+    if (result) {
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.USER_DEMOTED_SUCCEEDED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+
+      emit('changedUserRole')
+    } else
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.USER_DEMOTED_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+  } else
+    busToast.emit({
+      text: NOTIFICATION_MESSAGES.USER_DEMOTED_FAILED,
+      color: CUSTOM_LIGHT_COLORS['error-container']
+    })
+}
+
 const { getFullNameRole } = useUsers()
+
+/**
+ * Redirects to edit user page
+ *
+ * @param { string } uid Id of the user to edit
+ */
+function goToEdit(uid: string) {
+  router.push({ path: `/users/${uid}` })
+}
 
 /**
  * Deletes a user
@@ -53,131 +166,13 @@ function promptAction(act: string, u?: IUser) {
       break
   }
 }
-
-/**
- * Gets the user's role
- *
- * @param { string } uid
- */
-function getUserRole(uid: string) {
-  return props.users.find((u) => u.id === uid)!.role
-}
-
-const { changeUserRole } = useUsersStore()
-const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
-
-/**
- * Promotes the user one level
- *
- * @param { string } uid Id of the user to promote
- */
-async function promoteUser(uid: string) {
-  const currentUserRole = user.value?.role
-  const currentRole = getUserRole(uid)
-  let newRole
-
-  if (currentUserRole === 'Participant' || currentRole === 'Admin') newRole = null
-  else {
-    newRole =
-      currentRole === 'Participant'
-        ? 'Coordinator'
-        : currentRole === 'Coordinator' && currentUserRole === 'Admin'
-        ? 'Admin'
-        : null
-  }
-
-  if (newRole) {
-    const result = await changeUserRole(uid, newRole as typeof currentRole)
-
-    if (result) {
-      busToast.emit({
-        text: NOTIFICATION_MESSAGES.USER_PROMOTED_SUCCEEDED,
-        color: CUSTOM_LIGHT_COLORS['secondary-container']
-      })
-
-      emit('changedUserRole')
-    } else
-      busToast.emit({
-        text: NOTIFICATION_MESSAGES.USER_PROMOTED_FAILED,
-        color: CUSTOM_LIGHT_COLORS['error-container']
-      })
-  } else
-    busToast.emit({
-      text: NOTIFICATION_MESSAGES.USER_PROMOTED_FAILED,
-      color: CUSTOM_LIGHT_COLORS['error-container']
-    })
-}
-
-/**
- * Demotes the user one level
- *
- * @param { string } uid Id of the user to demote
- */
-async function demoteUser(uid: string) {
-  const currentUserRole = user.value?.role
-  const currentRole = getUserRole(uid)
-  let newRole
-
-  if (currentUserRole === 'Participant' || currentRole === 'Participant') newRole = null
-  else {
-    newRole =
-      currentRole === 'Coordinator'
-        ? 'Participant'
-        : currentRole === 'Admin' && currentUserRole === 'Admin'
-        ? 'Coordinator'
-        : null
-  }
-
-  if (newRole) {
-    const result = await changeUserRole(uid, newRole as typeof currentRole)
-
-    if (result) {
-      busToast.emit({
-        text: NOTIFICATION_MESSAGES.USER_DEMOTED_SUCCEEDED,
-        color: CUSTOM_LIGHT_COLORS['secondary-container']
-      })
-
-      emit('changedUserRole')
-    } else
-      busToast.emit({
-        text: NOTIFICATION_MESSAGES.USER_DEMOTED_FAILED,
-        color: CUSTOM_LIGHT_COLORS['error-container']
-      })
-  } else
-    busToast.emit({
-      text: NOTIFICATION_MESSAGES.USER_DEMOTED_FAILED,
-      color: CUSTOM_LIGHT_COLORS['error-container']
-    })
-}
-
-/**
- * Redirects to edit user page
- *
- * @param { string } uid Id of the user to edit
- */
-function goToEdit(uid: string) {
-  router.push({ path: `/users/${uid}` })
-}
-
-function getStatusColor(status: string) {
-  switch (status) {
-    case 'Active':
-      return 'secondary'
-    case 'Pending':
-      return 'primary'
-    case 'Deleted':
-      return 'error'
-    default:
-      return 'surface'
-  }
-}
 </script>
 
 <template>
-  <v-card density="compact" v-for="user in users" :key="user.id" class="my-2">
+  <v-card density="compact" class="my-2">
     <v-card-item prepend-icon="mdi-account" density="compact">
       <v-card-title tag="section">
-        <span>{{ getFullNameRole(user as IUser) }}</span>
+        <span>{{ getFullNameRole(user) }}</span>
         <v-chip class="float-right" :color="getStatusColor(user.status)">{{ user.status }}</v-chip>
       </v-card-title>
       <v-card-subtitle>{{ user.personal_info.email }}</v-card-subtitle>

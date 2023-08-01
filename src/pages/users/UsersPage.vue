@@ -31,7 +31,3 @@ onMounted(async () => {
     </v-btn>
   </article>
 </template>
-
-<style lang="scss">
-@use '../../styles/buttons.scss';
-</style>

@@ -21,7 +21,8 @@ onBeforeMount(() => {
     id: '',
     name: '',
     users: [],
-    coords: user.value ? [user.value.id] : []
+    coords: user.value ? [user.value.id] : [],
+    studies: []
   }
 })
 </script>

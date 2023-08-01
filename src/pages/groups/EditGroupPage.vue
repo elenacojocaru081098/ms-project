@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-const { groups, currentGroupIndex, currentGroup } = storeToRefs(useGroupsStore())
-const { updateGroup: updateDBGroup, fetchCurrentUserGroups } = useGroupsStore()
+const groupsStore = useGroupsStore()
+const { groupsInitialized, currentGroup } = storeToRefs(groupsStore)
+const { updateGroup: updateDBGroup, fetchCurrentUserGroups, setGroupAsCurrentGroup } = groupsStore
 const formFields = ref(useFormStructure().getCreateGroupForm())
 
 const computedFormFields = computed(() => {
@@ -18,11 +19,8 @@ async function updateGroup() {
 }
 
 onBeforeMount(async () => {
-  if (!groups.value.length) await fetchCurrentUserGroups()
-
-  currentGroupIndex.value = groups.value.findIndex(
-    (g) => g.id === router.currentRoute.value.params.id
-  )
+  if (!groupsInitialized.value) await fetchCurrentUserGroups()
+  setGroupAsCurrentGroup(router.currentRoute.value.params.id as string)
 })
 </script>
 

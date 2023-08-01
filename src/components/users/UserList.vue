@@ -5,10 +5,7 @@ const props = defineProps<{
   allowInvite?: boolean | undefined
 }>()
 
-const emit = defineEmits(['changedUserRole', 'removeUser', 'addUserToGroup'])
-
 const searchTerm = ref<string>('')
-
 const { getFullName } = useUsers()
 
 /**
@@ -40,6 +37,8 @@ const filteredList = computed(() => (list: string) => {
   return filtered || []
 })
 
+const emit = defineEmits(['changedUserRole', 'removeUser', 'addUserToGroup'])
+
 function emitRemoveUser(uid: string) {
   emit('removeUser', uid)
 }
@@ -50,19 +49,27 @@ function emitAddUserToGroup(uid: string) {
 </script>
 
 <template>
-  <section>
+  <article>
     <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta utilizator" v-model="searchTerm" />
-    <UserInviteCards
-      v-if="inviteCard"
-      :users="filteredList('members')"
-      :allow-invite="allowInvite"
-      @remove-user="emitRemoveUser"
-      @add-user-to-group="emitAddUserToGroup"
-    />
-    <UserCards
-      v-else
-      :users="filteredList('users')"
-      @changed-user-role="$emit('changedUserRole')"
-    />
-  </section>
+    <div class="users-list" v-if="users && users.length">
+      <section class="members-list" v-if="inviteCard">
+        <UserInviteCard
+          v-for="member in filteredList('members')"
+          :key="member.id"
+          :user="member"
+          :allow-invite="allowInvite"
+          @remove-user="emitRemoveUser"
+          @add-user-to-group="emitAddUserToGroup"
+        />
+      </section>
+      <section class="users-list" v-else>
+        <UserCard
+          v-for="user in filteredList('users')"
+          :key="user.id"
+          :user="user"
+          @changed-user-role="$emit('changedUserRole')"
+        />
+      </section>
+    </div>
+  </article>
 </template>

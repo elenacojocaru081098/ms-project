@@ -15,6 +15,7 @@ export interface IStudyQuestion {
 }
 
 export interface IStudy {
+  id: string
   title: string
   details: string
   questions: Array<IStudyQuestion>

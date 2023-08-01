@@ -4,9 +4,7 @@ import { storeToRefs } from 'pinia'
 const searchTerm = ref<string>('')
 
 const groupsStore = useGroupsStore()
-const { groups } = storeToRefs(groupsStore)
-
-// TODO: edit group (add users/coords)
+const { groups, groupsInitialized } = storeToRefs(groupsStore)
 
 /**
  * Filters the groups based on the search query
@@ -22,20 +20,16 @@ function goToCreateGroup() {
 const { fetchCurrentUserGroups } = groupsStore
 
 onBeforeMount(() => {
-  fetchCurrentUserGroups()
+  if (!groupsInitialized.value) fetchCurrentUserGroups()
 })
 </script>
 
 <template>
   <article>
     <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta grup" v-model="searchTerm" />
-    <GroupCards :group-list="filteredGroups" />
+    <GroupList :groups="filteredGroups" />
     <v-btn class="add-btn" color="secondary-container" @click="goToCreateGroup" icon>
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </article>
 </template>
-
-<style lang="scss">
-@use '../../styles/buttons.scss';
-</style>

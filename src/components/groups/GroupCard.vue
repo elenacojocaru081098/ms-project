@@ -1,36 +1,35 @@
 <script setup lang="ts">
-import type { IGroup } from '@/interfaces/group'
 import { CONSTANTS } from '@/constants'
 import type { IUser } from '@/interfaces/user'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  groupList: Array<IGroup>
+  groupId: string
 }>()
 
-const { deleteGroupById, updateGroupCoordinators } = useGroupsStore()
+const groupsStore = useGroupsStore()
+const { currentGroup } = storeToRefs(groupsStore)
+const { deleteGroupById, updateGroupCoordinators, setGroupAsCurrentGroup } = groupsStore
 
 /**
  * Deletes a group
- *
- * @param gid
  */
-function deleteGroup(gid: string) {
-  deleteGroupById(gid)
+function deleteGroup() {
+  deleteGroupById(currentGroup.value.id)
 }
 
 /**
  * Triggers a dialog box based on the pressed button
  *
  * @param { string } act The action that triggers the dialog box
- * @param { IUser } u
  */
-function promptAction(act: string, g?: IGroup) {
+function promptAction(act: string) {
   const { triggerDialog, hideDialog } = useDialogStore()
 
   switch (act) {
     case CONSTANTS.PROMPT_DELETE:
       triggerDialog(
-        `Vreti sa stergeti grupul ${g?.name}?`,
+        `Vreti sa stergeti grupul ${currentGroup.value.name}?`,
         [hideDialog, deleteGroup],
         [
           {
@@ -40,7 +39,7 @@ function promptAction(act: string, g?: IGroup) {
           {
             text: 'Da',
             color: 'secondary',
-            actionParams: [g?.id]
+            actionParams: [currentGroup.value.id]
           }
         ]
       )
@@ -52,23 +51,21 @@ function promptAction(act: string, g?: IGroup) {
 
 /**
  * Redirects to edit group page
- *
- * @param { string } gid Id of the group to edit
  */
-function goToEdit(gid: string) {
-  router.push({ path: `/groups/${gid}` })
+function goToEdit() {
+  router.push({ path: `/groups/${currentGroup.value.id}` })
 }
 
 const showCoordsList = ref<boolean>(false)
-const groupCoords = ref<Array<string>>([])
+const groupCoords = ref<Array<string>>(currentGroup.value.coords)
 
 /**
  * Loads current coordinators
  */
-async function loadCoordinators(group: IGroup) {
+async function loadCoordinators() {
   showCoordsList.value = !showCoordsList.value
   groupCoords.value.length = 0
-  groupCoords.value!.push(...group.coords)
+  groupCoords.value!.push(...currentGroup.value.coords)
 }
 
 /**
@@ -76,12 +73,12 @@ async function loadCoordinators(group: IGroup) {
  *
  * @param { IGroup } group
  */
-function updateCoordsList(group: IGroup) {
+function updateCoordsList() {
   if (groupCoords.value.length < 1) return
 
-  group.coords.length = 0
-  group.coords.push(...groupCoords.value)
-  updateGroupCoordinators(group.id, group.coords)
+  currentGroup.value.coords.length = 0
+  currentGroup.value.coords.push(...groupCoords.value)
+  updateGroupCoordinators(currentGroup.value.id, currentGroup.value.coords)
 }
 
 const coords = ref<Array<IUser>>([])
@@ -91,21 +88,22 @@ const coords = ref<Array<IUser>>([])
  */
 onBeforeMount(async () => {
   coords.value = await useUsersStore().getCoordinators()
+  setGroupAsCurrentGroup(props.groupId)
 })
 </script>
 
 <template>
-  <v-card density="compact" v-for="group in props.groupList" :key="group.id" class="my-2">
+  <v-card density="compact" class="my-2">
     <v-card-item prepend-icon="mdi-account-group" density="compact">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
-        <span>{{ group.name }}</span>
+        <span>{{ currentGroup.name }}</span>
         <section class="group-controls">
           <v-btn
             density="comfortable"
             size="small"
             color="tertiary"
             class="mr-2"
-            @click="loadCoordinators(group)"
+            @click="loadCoordinators()"
             icon
           >
             <v-icon>mdi-transit-transfer</v-icon>
@@ -115,7 +113,7 @@ onBeforeMount(async () => {
             size="small"
             color="primary"
             class="mr-2"
-            @click="goToEdit(group.id)"
+            @click="goToEdit()"
             icon
           >
             <v-icon>mdi-pencil</v-icon>
@@ -124,7 +122,7 @@ onBeforeMount(async () => {
             density="comfortable"
             size="small"
             color="error"
-            @click="promptAction(CONSTANTS.PROMPT_DELETE, group)"
+            @click="promptAction(CONSTANTS.PROMPT_DELETE)"
             icon
           >
             <v-icon>mdi-trash-can</v-icon>
@@ -132,7 +130,11 @@ onBeforeMount(async () => {
         </section>
       </v-card-title>
       <v-card-subtitle>
-        {{ group.users.length }} {{ group.users.length === 1 ? 'participant' : 'participanti' }}
+        {{
+          `${currentGroup.users.length} ${
+            currentGroup.users.length === 1 ? 'participant' : 'participanti'
+          }`
+        }}
       </v-card-subtitle>
       <v-card-text v-if="showCoordsList">
         <v-autocomplete
@@ -146,7 +148,7 @@ onBeforeMount(async () => {
           chips
           closable-chips
           multiple
-          @update:model-value="updateCoordsList(group)"
+          @update:model-value="updateCoordsList()"
         ></v-autocomplete>
       </v-card-text>
     </v-card-item>

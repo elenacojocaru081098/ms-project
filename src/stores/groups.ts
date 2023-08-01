@@ -21,22 +21,33 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
 
   // groups of the current user
   const groups = ref<Array<IGroup>>([])
+  const groupsInitialized = ref<boolean>(false)
 
   // current group we're working on
   const currentGroupIndex = ref<number>(0)
   const currentGroup = computed(() => groups.value[currentGroupIndex.value])
 
   /**
+   * Sets a group as the current group
+   *
+   * @param { string } gid
+   */
+  function setGroupAsCurrentGroup(gid: string) {
+    currentGroupIndex.value = groups.value.findIndex((g) => g.id === gid)
+  }
+
+  /**
    * Fetches current user's groups
    */
   async function fetchCurrentUserGroups() {
+    if (groupsInitialized.value) return
     if (user.value && user.value.role === 'Admin') groups.value.length = 0
     else if (user.value) await fetchUserGroups(user.value)
   }
 
   /**
    * Fetches the groups of a user
-   * If the user's a coordinator, fetches the groups the coordinate
+   * If the user's a coordinator, fetches the groups they coordinate
    * otherwise the groups they're a part of
    */
   async function fetchUserGroups(u: IUser) {
@@ -45,9 +56,10 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     const q = query(collection(db, 'groups'), where(column, 'array-contains', u.id))
 
     const qss = await getDocs(q)
-    if (groups.value.length) groups.value.length = 0
+    if (groupsInitialized.value) groups.value.length = 0
 
     qss.forEach((d) => groups.value.push({ id: d.id, ...d.data() } as IGroup))
+    groupsInitialized.value = true
   }
 
   /**
@@ -56,7 +68,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    * @param { string } gid The db group id
    */
   function getGroupById(gid: string) {
-    if (!groups.value) fetchCurrentUserGroups()
+    if (!groupsInitialized.value) fetchCurrentUserGroups()
     return groups.value.find((g) => g.id === gid)
   }
 
@@ -107,7 +119,6 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     }
   }
 
-  // TODO: redo this
   /**
    * Updates group info
    *
@@ -154,12 +165,6 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
       const group = doc(db, 'groups', gid)
       await updateDoc(group, { ...g })
 
-      // update in store as well
-      groups.value.forEach((g) => {
-        if (g.id !== gid) return
-        g.coords = [...cids]
-      })
-
       return true
     } catch (e: any) {
       console.error(e.message)
@@ -200,8 +205,10 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
 
   return {
     groups,
+    groupsInitialized,
     currentGroupIndex,
     currentGroup,
+    setGroupAsCurrentGroup,
     fetchCurrentUserGroups,
     getGroupById,
     getCurrentGroupMembers,

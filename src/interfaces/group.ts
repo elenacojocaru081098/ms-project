@@ -3,4 +3,5 @@ export interface IGroup {
   name: string
   coords: Array<string>
   users: Array<string>
+  studies: Array<string>
 }

@@ -1,25 +1,19 @@
 <script setup lang="ts">
-const props = defineProps<{
-  users:
-    | Array<{
-        id: string
-        fname: string
-        lname: string
-        field: string
-      }>
-    | undefined
+defineProps<{
+  user: {
+    id: string
+    fname: string
+    lname: string
+    field: string
+  }
   allowInvite: boolean | undefined
 }>()
 
 defineEmits(['removeUser', 'addUserToGroup'])
-
-function getKey(user: any) {
-  return user.fname + user.lname + user.field
-}
 </script>
 
 <template>
-  <v-card density="compact" v-for="user in props.users" :key="getKey(user)">
+  <v-card density="compact">
     <v-card-item density="compact">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ `${user.fname} ${user.lname}` }}</span>

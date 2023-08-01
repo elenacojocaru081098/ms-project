@@ -49,6 +49,13 @@ const userInfo = computed(() => {
         subtitle="Creati, editati & stergeti"
         to="/groups"
       ></v-list-item>
+      <v-list-item
+        density="compact"
+        prepend-icon="mdi-format-list-bulleted-type"
+        title="Gestionare studii"
+        subtitle="Creati, editati & stergeti"
+        to="/studies"
+      ></v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
