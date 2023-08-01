@@ -183,8 +183,8 @@ function promptAction(act: string, u?: IUser) {
         ><v-icon>mdi-account-arrow-up</v-icon></v-btn
       >
       <v-btn density="compact" color="tertiary" icon @click="demoteUser(user.id)"
-        ><v-icon>mdi-account-arrow-down</v-icon></v-btn
-      >
+        ><v-icon>mdi-account-arrow-down</v-icon>
+      </v-btn>
       <v-divider vertical />
       <v-btn density="compact" color="primary" @click="goToEdit(user.id)" icon>
         <v-icon>mdi-account-edit</v-icon>

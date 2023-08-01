@@ -171,11 +171,32 @@ export function useFormStructure() {
     ]
   }
 
+  /**
+   * Create study form structure
+   */
+  function getCreateStudyForm(): Array<IFormField> {
+    return [
+      {
+        label: 'Nume studiu',
+        type: 'text',
+        key: 'title',
+        value: ''
+      },
+      {
+        label: 'Detalii/Descriere',
+        type: 'textarea',
+        key: 'details',
+        value: ''
+      }
+    ]
+  }
+
   return {
     getRegisterForm,
     getLoginForm,
     getPasswordForm,
     getForgotForm,
-    getCreateGroupForm
+    getCreateGroupForm,
+    getCreateStudyForm
   }
 }

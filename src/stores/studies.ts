@@ -5,7 +5,7 @@ import { defineStore, storeToRefs } from 'pinia'
 
 export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
-  const { addTimestamps, addModifiedTags } = useDbInfo()
+  const { addTimestamps } = useDbInfo()
 
   const groupsStore = useGroupsStore()
   const { groups, groupsInitialized } = storeToRefs(groupsStore)
@@ -26,6 +26,8 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   function setStudyAsCurrentStudy(sid: string) {
     currentStudyIndex.value = studies.value.findIndex((s) => s.id === sid)
   }
+
+  // TODO: get all studies for the current owner
 
   /**
    * Gets all the studies of the user
@@ -61,17 +63,18 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
 
   /**
    * Creates a new study
-   *
-   * @param { string } name Name of the study
-   * @param { string } details Details of the study
    */
-  async function createStudy(name: string, details: string) {
+  async function createStudy(study: IStudy) {
     try {
       await addDoc(collection(db, 'studies'), {
-        name,
-        details,
+        title: study.title,
+        details: study.details,
+        questions: study.questions,
+        owner: study.owner,
         ...addTimestamps()
       })
+
+      router.push({ path: '/studies' })
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.STUDY_CREATED_SUCCEEDED,

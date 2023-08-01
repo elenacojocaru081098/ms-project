@@ -19,6 +19,7 @@ export interface IStudy {
   title: string
   details: string
   questions: Array<IStudyQuestion>
+  owner: string
 }
 
 export interface IUserAnswer {

@@ -128,7 +128,8 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     const g = {
       id: group.id,
       name: group.name,
-      users: group.users
+      users: group.users,
+      ...addModifiedTags()
     }
 
     try {

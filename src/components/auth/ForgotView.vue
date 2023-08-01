@@ -40,7 +40,7 @@ function forgotPassword() {
           density="compact"
           variant="solo-filled"
           color="primary"
-        ></v-text-field>
+        />
       </section>
     </v-form>
     <p @click="setAuthPage('login')">Intra in cont</p>

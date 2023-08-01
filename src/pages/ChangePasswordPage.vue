@@ -34,7 +34,7 @@ function submitPasswordForm() {
           density="compact"
           variant="solo-filled"
           color="primary"
-        ></v-text-field>
+        />
       </section>
     </v-form>
   </v-card-text>

@@ -37,7 +37,7 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
             variant="solo-filled"
             density="compact"
             color="primary"
-          ></v-text-field>
+          />
           <v-autocomplete
             v-if="field.type === 'select'"
             :label="field.label"
@@ -48,7 +48,7 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
             density="compact"
             color="on-background"
             theme="light"
-          ></v-autocomplete>
+          />
         </section>
       </v-form>
     </v-card-text>

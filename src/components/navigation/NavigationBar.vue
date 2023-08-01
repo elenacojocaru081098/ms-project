@@ -30,7 +30,7 @@ const userInfo = computed(() => {
       :title="(userInfo as string)"
       :subtitle="user?.personal_info.email"
       class="py-6"
-    ></v-list-item>
+    />
 
     <v-divider />
 
@@ -41,21 +41,21 @@ const userInfo = computed(() => {
         title="Gestionare utilizatori"
         subtitle="Creati, editati & stergeti"
         to="/users"
-      ></v-list-item>
+      />
       <v-list-item
         density="compact"
         prepend-icon="mdi-account-group"
         title="Gestionare grupuri"
         subtitle="Creati, editati & stergeti"
         to="/groups"
-      ></v-list-item>
+      />
       <v-list-item
         density="compact"
         prepend-icon="mdi-format-list-bulleted-type"
         title="Gestionare studii"
         subtitle="Creati, editati & stergeti"
         to="/studies"
-      ></v-list-item>
+      />
     </v-list>
   </v-navigation-drawer>
 </template>

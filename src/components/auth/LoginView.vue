@@ -41,7 +41,7 @@ function submitLoginForm() {
           density="compact"
           variant="solo-filled"
           color="primary"
-        ></v-text-field>
+        />
       </section>
     </v-form>
     <p @click="setAuthPage('forgot')">Ai uitat parola?</p>

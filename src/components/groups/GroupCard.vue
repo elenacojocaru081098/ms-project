@@ -149,7 +149,7 @@ onBeforeMount(async () => {
           closable-chips
           multiple
           @update:model-value="updateCoordsList()"
-        ></v-autocomplete>
+        />
       </v-card-text>
     </v-card-item>
   </v-card>

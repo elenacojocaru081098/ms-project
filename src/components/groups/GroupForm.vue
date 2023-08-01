@@ -18,7 +18,7 @@ defineEmits(['showGroupMembers', 'showAllUsers'])
  * Submits the form
  */
 function submitForm() {
-  if (!valid) return
+  if (!valid.value) return
 
   const groupName = props.formFields.find((f) => f.key === 'name')
   activeGroup.value.name = groupName?.value || ''
@@ -73,6 +73,7 @@ async function initializeUsersLists() {
 
 const { currentGroup } = storeToRefs(useGroupsStore())
 const activeGroup = ref<IGroup>(props.newGroup ? props.group : currentGroup.value)
+
 /**
  * Removes a user from the group
  *
@@ -149,7 +150,7 @@ onMounted(async () => {
             variant="solo-filled"
             color="primary"
             hide-details
-          ></v-text-field>
+          />
         </section>
       </v-form>
       <p class="mt-4">

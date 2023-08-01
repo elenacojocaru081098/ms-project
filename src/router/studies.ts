@@ -6,7 +6,7 @@ export const studiesRoutes = [
     components: {
       default: () => import('~/pages/studies/StudiesPage.vue')
     }
-  }
+  },
   // {
   //   path: '/studies/:id',
   //   name: 'Edit Study',
@@ -14,13 +14,13 @@ export const studiesRoutes = [
   //     // default: () => import('~/pages/groups/EditGroupPage.vue')
   //   }
   // },
-  // {
-  //   path: '/studies/create',
-  //   name: 'Create Study',
-  //   components: {
-  //     // default: () => import('~/pages/groups/CreateGroupPage.vue')
-  //   }
-  // },
+  {
+    path: '/studies/create',
+    name: 'Create Study',
+    components: {
+      default: () => import('~/pages/studies/CreateStudyPage.vue')
+    }
+  }
   // {
   //   path: '/studies/all',
   //   name: 'My studies',
