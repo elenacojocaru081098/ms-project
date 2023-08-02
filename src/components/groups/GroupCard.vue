@@ -90,6 +90,9 @@ onBeforeMount(async () => {
   coords.value = await useUsersStore().getCoordinators()
   setGroupAsCurrentGroup(props.groupId)
 })
+
+const { hasCoordinatorRights } = useUserPermission()
+const { user } = storeToRefs(useUserStore())
 </script>
 
 <template>
@@ -97,7 +100,7 @@ onBeforeMount(async () => {
     <v-card-item prepend-icon="mdi-account-group" density="compact">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ currentGroup.name }}</span>
-        <section class="group-controls">
+        <section class="group-controls" v-if="hasCoordinatorRights(user)">
           <v-btn
             density="comfortable"
             size="small"

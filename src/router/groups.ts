@@ -5,9 +5,6 @@ export const groupsRoutes = [
     name: 'Manage Groups',
     components: {
       default: () => import('~/pages/groups/GroupsPage.vue')
-    },
-    meta: {
-      roles: ['Coordinator', 'Admin']
     }
   },
   {

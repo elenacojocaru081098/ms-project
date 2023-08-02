@@ -53,7 +53,6 @@ const { hasCoordinatorRights } = useUserPermission()
         to="/users"
       />
       <v-list-item
-        v-if="hasCoordinatorRights(user)"
         density="compact"
         prepend-icon="mdi-account-group"
         title="Gestionare grupuri"
