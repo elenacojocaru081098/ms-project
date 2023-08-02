@@ -46,10 +46,8 @@ onAuthStateChanged(auth, async (user) => {
 
   let status: string | boolean = false
 
-  if (user) {
-    const { setLoggedUserData } = useUserStore()
-    status = await setLoggedUserData(user)
-  }
+  const { setLoggedUserData } = useUserStore()
+  status = await setLoggedUserData(user)
 
   haveToInitializeApp && initializeApp()
 

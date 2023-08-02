@@ -68,7 +68,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     if (groupsInitialized.value) groups.value.length = 0
 
     qss.forEach((d) => groups.value.push({ id: d.id, ...d.data() } as IGroup))
-    groupsInitialized.value = true
+    groupsInitialized.value = !!groups.value
   }
 
   /**

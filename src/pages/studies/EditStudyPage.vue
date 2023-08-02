@@ -30,6 +30,7 @@ onBeforeMount(async () => {
 
 <template>
   <StudyForm
+    v-if="currentStudy"
     :action="updateStudy"
     title="Editare studiu"
     :form-fields="computedFormFields"

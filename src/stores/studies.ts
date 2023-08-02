@@ -39,7 +39,6 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   /**
    * Fetches current user's studies
    */
-  // TODO: check this...
   async function fetchCurrentUserStudies() {
     if (studiesInitialized.value) return
 
@@ -48,7 +47,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
 
     groups.forEach((g) => studiesIds.push(...g.studies))
     await getStudiesByIdList(studiesIds)
-    studiesInitialized.value = true
+    studiesInitialized.value = !!studies.value
   }
 
   /**
