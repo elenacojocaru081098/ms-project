@@ -174,7 +174,10 @@ export function useFormStructure() {
   /**
    * Create study form structure
    */
-  function getCreateStudyForm(): Array<IFormField> {
+  async function getCreateStudyForm(): Promise<Array<IFormField>> {
+    const { getAllGroups } = useGroupsStore()
+    const groups = await getAllGroups()
+
     return [
       {
         label: 'Nume studiu',
@@ -187,6 +190,13 @@ export function useFormStructure() {
         type: 'textarea',
         key: 'details',
         value: ''
+      },
+      {
+        label: 'Grup',
+        type: 'select',
+        items: groups,
+        key: 'group',
+        value: null
       }
     ]
   }

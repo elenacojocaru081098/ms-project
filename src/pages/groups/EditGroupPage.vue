@@ -14,8 +14,8 @@ const computedFormFields = computed(() => {
 /**
  * Updates the group on submit
  */
-async function updateGroup() {
-  await updateDBGroup(currentGroup.value)
+function updateGroup() {
+  updateDBGroup(currentGroup.value)
 }
 
 onBeforeMount(async () => {

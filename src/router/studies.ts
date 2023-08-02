@@ -7,13 +7,13 @@ export const studiesRoutes = [
       default: () => import('~/pages/studies/StudiesPage.vue')
     }
   },
-  // {
-  //   path: '/studies/:id',
-  //   name: 'Edit Study',
-  //   components: {
-  //     // default: () => import('~/pages/groups/EditGroupPage.vue')
-  //   }
-  // },
+  {
+    path: '/studies/:id',
+    name: 'Edit Study',
+    components: {
+      default: () => import('~/pages/studies/EditStudyPage.vue')
+    }
+  },
   {
     path: '/studies/create',
     name: 'Create Study',

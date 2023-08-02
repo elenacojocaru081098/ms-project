@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import type { IStudy } from '@/interfaces/study'
-import { storeToRefs } from 'pinia'
 
-const formFields = ref(useFormStructure().getCreateStudyForm())
-
-const { user } = storeToRefs(useUserStore())
+const formFields = ref(await useFormStructure().getCreateStudyForm())
 const { createStudy } = useStudiesStore()
-
 const study = ref<IStudy>()
 
 /**
  * Creates a new study
  */
-function createNewStudy() {
-  createStudy(study.value!)
+function createNewStudy(gid: string) {
+  createStudy(study.value!, gid)
 }
 
 onBeforeMount(() => {
@@ -21,12 +17,17 @@ onBeforeMount(() => {
     id: '',
     title: '',
     details: '',
-    questions: [],
-    owner: user.value!.id
+    questions: []
   }
 })
 </script>
 
 <template>
-  <StudyForm :form-fields="formFields" :action="createNewStudy" :new-study="true" :study="study!" />
+  <StudyForm
+    title="Creare studiu"
+    :form-fields="formFields"
+    :action="createNewStudy"
+    :new-study="true"
+    :study="study!"
+  />
 </template>

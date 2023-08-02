@@ -22,10 +22,19 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
   // groups of the current user
   const groups = ref<Array<IGroup>>([])
   const groupsInitialized = ref<boolean>(false)
+  fetchCurrentUserGroups()
 
   // current group we're working on
   const currentGroupIndex = ref<number>(0)
   const currentGroup = computed(() => groups.value[currentGroupIndex.value])
+
+  /**
+   * Gets the groups
+   */
+  async function getAllGroups() {
+    if (!groupsInitialized.value) await fetchCurrentUserGroups()
+    return groups.value
+  }
 
   /**
    * Sets a group as the current group
@@ -67,10 +76,10 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    *
    * @param { string } gid The db group id
    */
-  function getGroupById(gid: string) {
-    if (!groupsInitialized.value) fetchCurrentUserGroups()
-    return groups.value.find((g) => g.id === gid)
-  }
+  // function getGroupById(gid: string) {
+  //   if (!groupsInitialized.value) fetchCurrentUserGroups()
+  //   return groups.value.find((g) => g.id === gid)
+  // }
 
   /**
    * Gets the member's list of the current group
@@ -129,6 +138,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
       id: group.id,
       name: group.name,
       users: group.users,
+      studies: group.studies,
       ...addModifiedTags()
     }
 
@@ -148,6 +158,31 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
         color: CUSTOM_LIGHT_COLORS['error-container']
       })
     }
+  }
+
+  /**
+   * Changes/Updates a group's studies
+   *
+   * @param { string } gid The db group id
+   * @param { Array<string> } sids Studies ids
+   */
+  async function updateGroupStudies(gid: string, sids: Array<string>) {
+    const g = {
+      studies: sids,
+      ...addModifiedTags()
+    }
+
+    const group = doc(db, 'groups', gid)
+    await updateDoc(group, { ...g })
+  }
+
+  /**
+   * Gets groups that participate in a certain study
+   *
+   * @param { string } sid
+   */
+  function getGroupsWithStudy(sid: string) {
+    return groups.value.filter((g) => g.studies.includes(sid))
   }
 
   /**
@@ -205,17 +240,18 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
   }
 
   return {
-    groups,
     groupsInitialized,
     currentGroupIndex,
     currentGroup,
+    getAllGroups,
     setGroupAsCurrentGroup,
     fetchCurrentUserGroups,
-    getGroupById,
     getCurrentGroupMembers,
     getAvailableParticipants,
     deleteGroupById,
     updateGroup,
+    updateGroupStudies,
+    getGroupsWithStudy,
     updateGroupCoordinators,
     createGroup
   }

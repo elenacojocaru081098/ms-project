@@ -1,22 +1,23 @@
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IStudy } from '@/interfaces/study'
 import { addDoc, collection, documentId, getDocs, query, where } from 'firebase/firestore'
-import { defineStore, storeToRefs } from 'pinia'
+import { defineStore } from 'pinia'
 
 export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
   const { addTimestamps } = useDbInfo()
 
   const groupsStore = useGroupsStore()
-  const { groups, groupsInitialized } = storeToRefs(groupsStore)
-  const { fetchCurrentUserGroups } = groupsStore
+  const { getAllGroups, updateGroupStudies } = groupsStore
 
   // studies of the current user (creator/member)
   const studies = ref<Array<IStudy>>([])
+  const studiesInitialized = ref<boolean>(false)
+  fetchCurrentUserStudies()
 
   // current study we're working on
   const currentStudyIndex = ref<number>(0)
-  const currentStudy = computed<IStudy>(() => studies.value[currentStudyIndex.value])
+  const currentStudy = computed(() => studies.value[currentStudyIndex.value])
 
   /**
    * Sets a study as the current one
@@ -27,19 +28,27 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     currentStudyIndex.value = studies.value.findIndex((s) => s.id === sid)
   }
 
-  // TODO: get all studies for the current owner
-
   /**
    * Gets all the studies of the user
    */
   async function getAllStudies() {
-    if (!groupsInitialized.value) await fetchCurrentUserGroups()
-    if (groups.value.length > 0) {
-      const studiesIds: Array<string> = []
+    if (!studiesInitialized.value) await fetchCurrentUserStudies()
+    return studies.value
+  }
 
-      groups.value.forEach((g) => studiesIds.push(...g.studies))
-      getStudiesByIdList(studiesIds)
-    }
+  /**
+   * Fetches current user's studies
+   */
+  // TODO: check this...
+  async function fetchCurrentUserStudies() {
+    if (studiesInitialized.value) return
+
+    const groups = await getAllGroups()
+    const studiesIds: Array<string> = []
+
+    groups.forEach((g) => studiesIds.push(...g.studies))
+    await getStudiesByIdList(studiesIds)
+    studiesInitialized.value = true
   }
 
   /**
@@ -64,15 +73,16 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   /**
    * Creates a new study
    */
-  async function createStudy(study: IStudy) {
+  async function createStudy(study: IStudy, gid: string) {
     try {
-      await addDoc(collection(db, 'studies'), {
+      const s = await addDoc(collection(db, 'studies'), {
         title: study.title,
         details: study.details,
         questions: study.questions,
-        owner: study.owner,
         ...addTimestamps()
       })
+
+      updateGroupStudies(gid, [s.id])
 
       router.push({ path: '/studies' })
 
@@ -90,12 +100,16 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     }
   }
 
+  async function updateStudy() {}
+
   return {
     studies,
-    currentStudyIndex,
+    studiesInitialized,
     currentStudy,
     setStudyAsCurrentStudy,
     getAllStudies,
-    createStudy
+    fetchCurrentUserStudies,
+    createStudy,
+    updateStudy
   }
 })

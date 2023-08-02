@@ -9,6 +9,10 @@ const studiesStore = useStudiesStore()
 const { setStudyAsCurrentStudy } = studiesStore
 const { currentStudy } = storeToRefs(studiesStore)
 
+function goToEdit() {
+  router.push({ path: `/studies/${currentStudy.value.id}` })
+}
+
 onBeforeMount(() => {
   setStudyAsCurrentStudy(props.studyId)
 })
@@ -24,5 +28,29 @@ onBeforeMount(() => {
         {{ currentStudy.details }}
       </v-card-subtitle>
     </v-card-item>
+    <v-divider />
+    <v-card-actions class="justify-end">
+      <v-btn
+        form="study-form"
+        type="button"
+        append-icon="mdi-help-box-multiple-outline"
+        class="px-4"
+        variant="elevated"
+        color="secondary"
+      >
+        Intrebari
+      </v-btn>
+      <v-btn
+        form="study-form"
+        type="submit"
+        append-icon="mdi-pencil"
+        class="px-4"
+        variant="elevated"
+        color="primary"
+        @click="goToEdit"
+      >
+        Editeaza
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>

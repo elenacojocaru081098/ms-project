@@ -5,6 +5,7 @@ import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   formFields: Array<IFormField>
+  title: string
   action: Function
   newStudy: boolean
   study: IStudy
@@ -20,15 +21,19 @@ const activeStudy = ref<IStudy>(props.newStudy ? props.study : currentStudy.valu
 function submitForm() {
   if (!valid.value) return
 
-  props.formFields.forEach((f) => (activeStudy.value[f.key] = f.value))
-  props.action()
+  let gid: string = ''
+  props.formFields.forEach((f) => {
+    if (f.key === 'group') gid = f.value!
+    activeStudy.value[f.key] = f.value
+  })
+  props.action(gid)
 }
 </script>
 
 <template>
   <v-card>
     <v-card-item prepend-icon="mdi-format-list-bulleted-type" density="compact">
-      <v-card-title tag="section">Creare studiu</v-card-title>
+      <v-card-title tag="section">{{ title }}</v-card-title>
     </v-card-item>
     <v-card-text>
       <v-form
@@ -53,6 +58,18 @@ function submitForm() {
             variant="solo-filled"
             density="compact"
             color="primary"
+          />
+          <v-autocomplete
+            v-if="field.type === 'select'"
+            :label="field.label"
+            :items="field.items"
+            item-title="name"
+            item-value="id"
+            v-model="field.value"
+            variant="solo-filled"
+            density="compact"
+            color="on-background"
+            theme="light"
           />
         </section>
       </v-form>

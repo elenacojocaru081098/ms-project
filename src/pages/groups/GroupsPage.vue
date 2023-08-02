@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
+import type { IGroup } from '@/interfaces/group'
 
 const searchTerm = ref<string>('')
-
 const groupsStore = useGroupsStore()
-const { groups, groupsInitialized } = storeToRefs(groupsStore)
+const { getAllGroups } = groupsStore
+const groups = ref<Array<IGroup>>(await getAllGroups())
 
 /**
  * Filters the groups based on the search query
@@ -16,12 +16,6 @@ const filteredGroups = computed(() =>
 function goToCreateGroup() {
   router.push({ path: '/groups/create' })
 }
-
-const { fetchCurrentUserGroups } = groupsStore
-
-onBeforeMount(() => {
-  if (!groupsInitialized.value) fetchCurrentUserGroups()
-})
 </script>
 
 <template>

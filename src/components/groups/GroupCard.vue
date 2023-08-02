@@ -103,7 +103,7 @@ onBeforeMount(async () => {
             size="small"
             color="tertiary"
             class="mr-2"
-            @click="loadCoordinators()"
+            @click="loadCoordinators"
             icon
           >
             <v-icon>mdi-transit-transfer</v-icon>
@@ -113,7 +113,7 @@ onBeforeMount(async () => {
             size="small"
             color="primary"
             class="mr-2"
-            @click="goToEdit()"
+            @click="goToEdit"
             icon
           >
             <v-icon>mdi-pencil</v-icon>
