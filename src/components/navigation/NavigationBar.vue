@@ -10,6 +10,8 @@ const { logout } = useAuthStore()
 const userInfo = computed(() => {
   if (user.value) return getFullNameRole(user.value as IUser)
 })
+
+const { hasCoordinatorRights } = useUserPermission()
 </script>
 
 <template>
@@ -37,12 +39,21 @@ const userInfo = computed(() => {
     <v-list class="py-4" nav>
       <v-list-item
         density="compact"
+        prepend-icon="mdi-home"
+        title="Prima pagina"
+        subtitle="Reveniti la panoul de control"
+        to="/dashboard"
+      />
+      <v-list-item
+        v-if="hasCoordinatorRights(user)"
+        density="compact"
         prepend-icon="mdi-account"
         title="Gestionare utilizatori"
         subtitle="Creati, editati & stergeti"
         to="/users"
       />
       <v-list-item
+        v-if="hasCoordinatorRights(user)"
         density="compact"
         prepend-icon="mdi-account-group"
         title="Gestionare grupuri"

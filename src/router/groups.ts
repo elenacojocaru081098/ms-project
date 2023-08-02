@@ -5,6 +5,9 @@ export const groupsRoutes = [
     name: 'Manage Groups',
     components: {
       default: () => import('~/pages/groups/GroupsPage.vue')
+    },
+    meta: {
+      roles: ['Coordinator', 'Admin']
     }
   },
   {
@@ -12,6 +15,9 @@ export const groupsRoutes = [
     name: 'Edit Group',
     components: {
       default: () => import('~/pages/groups/EditGroupPage.vue')
+    },
+    meta: {
+      roles: ['Coordinator', 'Admin']
     }
   },
   {
@@ -19,6 +25,9 @@ export const groupsRoutes = [
     name: 'Create Group',
     components: {
       default: () => import('~/pages/groups/CreateGroupPage.vue')
+    },
+    meta: {
+      roles: ['Coordinator', 'Admin']
     }
   }
 ]

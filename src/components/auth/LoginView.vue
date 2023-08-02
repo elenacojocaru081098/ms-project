@@ -44,7 +44,7 @@ function submitLoginForm() {
         />
       </section>
     </v-form>
-    <p @click="setAuthPage('forgot')">Ai uitat parola?</p>
+    <p class="text-body-2" @click="setAuthPage('forgot')">Ai uitat parola?</p>
   </v-card-text>
   <v-card-actions class="justify-end">
     <v-btn

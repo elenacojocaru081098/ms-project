@@ -42,7 +42,7 @@ defineEmits(['removeUser', 'addUserToGroup'])
           </v-btn>
         </section>
       </v-card-title>
-      <v-card-subtitle>
+      <v-card-subtitle class="text-subtitle-2">
         {{ user.field }}
       </v-card-subtitle>
     </v-card-item>

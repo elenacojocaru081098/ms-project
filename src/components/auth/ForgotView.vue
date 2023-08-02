@@ -43,7 +43,7 @@ function forgotPassword() {
         />
       </section>
     </v-form>
-    <p @click="setAuthPage('login')">Intra in cont</p>
+    <p class="text-body-2" @click="setAuthPage('login')">Intra in cont</p>
   </v-card-text>
   <v-card-actions class="justify-end">
     <v-btn

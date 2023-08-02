@@ -5,6 +5,9 @@ export const usersRoutes = [
     name: 'Manage Users',
     components: {
       default: () => import('~/pages/users/UsersPage.vue')
+    },
+    meta: {
+      roles: ['Coordinator', 'Admin']
     }
   },
   {
@@ -12,6 +15,9 @@ export const usersRoutes = [
     name: 'Edit User',
     components: {
       default: () => import('~/pages/users/EditUserPage.vue')
+    },
+    meta: {
+      roles: ['Coordinator', 'Admin']
     }
   }
 ]

@@ -153,7 +153,7 @@ onMounted(async () => {
           />
         </section>
       </v-form>
-      <p class="mt-4">
+      <p class="mt-4 text-subtitle-2">
         {{ memberList?.length || 0 }}
         {{ memberList?.length === 1 ? 'participant' : 'participanti' }}
       </p>

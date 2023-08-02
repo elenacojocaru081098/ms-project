@@ -24,7 +24,7 @@ onBeforeMount(() => {
       <v-card-title tag="section">
         {{ currentStudy.title }}
       </v-card-title>
-      <v-card-subtitle>
+      <v-card-subtitle class="text-subtitle-2">
         {{ currentStudy.details }}
       </v-card-subtitle>
     </v-card-item>

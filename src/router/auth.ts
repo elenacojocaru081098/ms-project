@@ -10,21 +10,30 @@ export const authRoutes = [
         path: 'login',
         name: 'Login',
         components: {
-          default: () => import('~/pages/LoginPage.vue')
+          default: () => import('~/pages/auth/LoginPage.vue')
+        },
+        meta: {
+          roles: '*'
         }
       },
       {
         path: 'register',
         name: 'Register',
         components: {
-          default: () => import('~/pages/RegisterPage.vue')
+          default: () => import('~/pages/auth/RegisterPage.vue')
+        },
+        meta: {
+          roles: ['Coordinator', 'Admin']
         }
       },
       {
         path: 'password',
         name: 'Change Password',
         components: {
-          default: () => import('~/pages/ChangePasswordPage.vue')
+          default: () => import('~/pages/auth/ChangePasswordPage.vue')
+        },
+        meta: {
+          roles: '*'
         }
       }
     ]

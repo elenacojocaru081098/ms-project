@@ -129,7 +129,7 @@ onBeforeMount(async () => {
           </v-btn>
         </section>
       </v-card-title>
-      <v-card-subtitle>
+      <v-card-subtitle class="text-subtitle-2">
         {{
           `${currentGroup.users.length} ${
             currentGroup.users.length === 1 ? 'participant' : 'participanti'

@@ -175,7 +175,7 @@ function promptAction(act: string, u?: IUser) {
         <span>{{ getFullNameRole(user) }}</span>
         <v-chip class="float-right" :color="getStatusColor(user.status)">{{ user.status }}</v-chip>
       </v-card-title>
-      <v-card-subtitle>{{ user.personal_info.email }}</v-card-subtitle>
+      <v-card-subtitle class="text-subtitle-2">{{ user.personal_info.email }}</v-card-subtitle>
     </v-card-item>
     <v-divider />
     <v-card-actions class="justify-space-evenly">
