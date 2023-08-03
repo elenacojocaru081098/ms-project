@@ -15,7 +15,13 @@ function goToCreateStudy() {
   <article>
     <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta studiu" v-model="searchTerm" />
     <StudyCard v-for="study in studies" :key="study.id" :study-id="study.id" />
-    <v-btn class="add-btn" color="secondary-container" @click="goToCreateStudy" icon>
+    <v-btn
+      class="add-btn"
+      density="default"
+      color="secondary-container"
+      @click="goToCreateStudy"
+      icon
+    >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </article>

@@ -96,8 +96,8 @@ const { user } = storeToRefs(useUserStore())
 </script>
 
 <template>
-  <v-card density="compact" class="my-2">
-    <v-card-item prepend-icon="mdi-account-group" density="compact">
+  <v-card class="my-2">
+    <v-card-item prepend-icon="mdi-account-group">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ currentGroup.name }}</span>
         <section class="group-controls" v-if="hasCoordinatorRights(user)">
@@ -147,7 +147,6 @@ const { user } = storeToRefs(useUserStore())
           item-title="personal_info.email"
           item-value="id"
           variant="solo-filled"
-          density="compact"
           chips
           closable-chips
           multiple

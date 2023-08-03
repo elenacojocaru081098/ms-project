@@ -13,8 +13,8 @@ defineEmits(['removeUser', 'addUserToGroup'])
 </script>
 
 <template>
-  <v-card density="compact">
-    <v-card-item density="compact">
+  <v-card class="my-2">
+    <v-card-item>
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
         <span>{{ `${user.fname} ${user.lname}` }}</span>
         <section class="card-controls">

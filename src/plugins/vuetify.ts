@@ -84,5 +84,21 @@ export default createVuetify({
     sets: {
       mdi
     }
+  },
+  defaults: {
+    global: {
+      density: 'compact'
+    },
+    VCard: {
+      VCardActions: {
+        VBtn: {
+          variant: 'elevated',
+          density: 'default'
+        }
+      }
+    },
+    VList: {
+      density: 'default'
+    }
   }
 })

@@ -169,8 +169,8 @@ function promptAction(act: string, u?: IUser) {
 </script>
 
 <template>
-  <v-card density="compact" class="my-2">
-    <v-card-item prepend-icon="mdi-account" density="compact">
+  <v-card class="my-2">
+    <v-card-item prepend-icon="mdi-account">
       <v-card-title tag="section">
         <span>{{ getFullNameRole(user) }}</span>
         <v-chip class="float-right" :color="getStatusColor(user.status)">{{ user.status }}</v-chip>
@@ -179,19 +179,20 @@ function promptAction(act: string, u?: IUser) {
     </v-card-item>
     <v-divider />
     <v-card-actions class="justify-space-evenly">
-      <v-btn density="compact" color="secondary" icon @click="promoteUser(user.id)"
+      <v-btn density="compact" variant="text" color="secondary" icon @click="promoteUser(user.id)"
         ><v-icon>mdi-account-arrow-up</v-icon></v-btn
       >
-      <v-btn density="compact" color="tertiary" icon @click="demoteUser(user.id)"
+      <v-btn density="compact" variant="text" color="tertiary" icon @click="demoteUser(user.id)"
         ><v-icon>mdi-account-arrow-down</v-icon>
       </v-btn>
       <v-divider vertical />
-      <v-btn density="compact" color="primary" @click="goToEdit(user.id)" icon>
+      <v-btn density="compact" variant="text" color="primary" @click="goToEdit(user.id)" icon>
         <v-icon>mdi-account-edit</v-icon>
       </v-btn>
       <v-btn
         density="compact"
         color="error"
+        variant="text"
         @click="promptAction(CONSTANTS.PROMPT_DELETE, user)"
         icon
       >

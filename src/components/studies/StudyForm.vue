@@ -32,7 +32,7 @@ function submitForm() {
 
 <template>
   <v-card>
-    <v-card-item prepend-icon="mdi-format-list-bulleted-type" density="compact">
+    <v-card-item prepend-icon="mdi-format-list-bulleted-type">
       <v-card-title tag="section">{{ title }}</v-card-title>
     </v-card-item>
     <v-card-text>
@@ -48,7 +48,6 @@ function submitForm() {
             :label="field.label"
             v-model="field.value"
             variant="solo-filled"
-            density="compact"
             color="primary"
           />
           <v-textarea
@@ -56,7 +55,6 @@ function submitForm() {
             :label="field.label"
             v-model="field.value"
             variant="solo-filled"
-            density="compact"
             color="primary"
           />
           <v-autocomplete
@@ -67,7 +65,6 @@ function submitForm() {
             item-value="id"
             v-model="field.value"
             variant="solo-filled"
-            density="compact"
             color="on-background"
             theme="light"
           />
@@ -80,19 +77,11 @@ function submitForm() {
         type="button"
         append-icon="mdi-help-box-multiple-outline"
         class="px-4"
-        variant="elevated"
         color="secondary"
       >
         Intrebari
       </v-btn>
-      <v-btn
-        form="study-form"
-        type="submit"
-        append-icon="mdi-check"
-        class="px-4"
-        variant="elevated"
-        color="primary"
-      >
+      <v-btn form="study-form" type="submit" append-icon="mdi-check" class="px-4" color="primary">
         Salveaza
       </v-btn>
     </v-card-actions>

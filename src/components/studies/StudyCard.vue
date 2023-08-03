@@ -22,8 +22,8 @@ const { hasCoordinatorRights } = useUserPermission()
 </script>
 
 <template>
-  <v-card density="compact">
-    <v-card-item prepend-icon="mdi-format-list-bulleted-type" density="compact">
+  <v-card>
+    <v-card-item prepend-icon="mdi-format-list-bulleted-type">
       <v-card-title tag="section">
         {{ currentStudy.title }}
       </v-card-title>
@@ -39,7 +39,6 @@ const { hasCoordinatorRights } = useUserPermission()
           type="button"
           append-icon="mdi-help-box-multiple-outline"
           class="px-4"
-          variant="elevated"
           color="secondary"
         >
           Intrebari
@@ -49,7 +48,6 @@ const { hasCoordinatorRights } = useUserPermission()
           type="submit"
           append-icon="mdi-pencil"
           class="px-4"
-          variant="elevated"
           color="primary"
           @click="goToEdit"
         >
@@ -62,7 +60,6 @@ const { hasCoordinatorRights } = useUserPermission()
           type="button"
           append-icon="mdi-arrow-right"
           class="px-4"
-          variant="elevated"
           color="secondary"
         >
           Raspunde

@@ -22,7 +22,13 @@ function goToCreateGroup() {
   <article>
     <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta grup" v-model="searchTerm" />
     <GroupList :groups="filteredGroups" />
-    <v-btn class="add-btn" color="secondary-container" @click="goToCreateGroup" icon>
+    <v-btn
+      class="add-btn"
+      density="default"
+      color="secondary-container"
+      @click="goToCreateGroup"
+      icon
+    >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </article>

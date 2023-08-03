@@ -17,8 +17,8 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
 </script>
 
 <template>
-  <v-card density="compact">
-    <v-card-item :prepend-icon="titleIcon" density="compact">
+  <v-card>
+    <v-card-item :prepend-icon="titleIcon">
       <v-card-title tag="section">{{ formTitle }}</v-card-title>
     </v-card-item>
     <v-card-text>
@@ -35,7 +35,6 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
             :rules="validation.getValidationRules(registerRules, field.rulesKey)"
             v-model="field.value"
             variant="solo-filled"
-            density="compact"
             color="primary"
           />
           <v-autocomplete
@@ -45,7 +44,6 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
             :items="field.items"
             v-model="field.value"
             variant="solo-filled"
-            density="compact"
             color="on-background"
             theme="light"
           />
@@ -58,7 +56,6 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
         type="submit"
         append-icon="mdi-arrow-right"
         class="px-4"
-        variant="elevated"
         color="primary"
       >
         {{ buttonText }}

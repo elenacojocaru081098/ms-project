@@ -26,7 +26,7 @@ onMounted(async () => {
 <template>
   <article class="users-page">
     <UserList :invite-card="false" :users="users" @changed-user-role="changedUserRole" />
-    <v-btn class="add-btn" color="secondary-container" @click="goToRegister" icon>
+    <v-btn class="add-btn" density="default" color="secondary-container" @click="goToRegister" icon>
       <v-icon>mdi-plus</v-icon>
     </v-btn>
   </article>

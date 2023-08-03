@@ -60,14 +60,14 @@ function listUsers() {
   showAllUsers.value = !showAllUsers.value
 }
 
-const { getCurrentGroupMembers, getAvailableParticipants } = useGroupsStore()
+const { getCurrentGroupMembers, getAvailableParticipants, setGroupAsCurrentGroup } =
+  useGroupsStore()
 
 /**
  * Initializes the memberList and users arrays
  */
 async function initializeUsersLists() {
   if (!props.newGroup) memberList.value = await getCurrentGroupMembers()
-
   users.value = await getAvailableParticipants()
 }
 
@@ -124,13 +124,14 @@ async function addUserToGroup(uid: string) {
  * Initializes the form when component mounts
  */
 onMounted(async () => {
+  if (props.newGroup) setGroupAsCurrentGroup()
   initializeUsersLists()
 })
 </script>
 
 <template>
   <v-card>
-    <v-card-item prepend-icon="mdi-account-group" density="compact">
+    <v-card-item prepend-icon="mdi-account-group">
       <v-card-title tag="section">{{ title }}</v-card-title>
     </v-card-item>
     <v-card-text>
@@ -146,7 +147,6 @@ onMounted(async () => {
             :label="field.label"
             :type="field.typeProp || 'text'"
             v-model="field.value"
-            density="compact"
             variant="solo-filled"
             color="primary"
             hide-details
@@ -165,7 +165,6 @@ onMounted(async () => {
         form="group-form"
         type="button"
         class="px-4"
-        variant="elevated"
         color="tertiary"
         @click="listUsers"
         icon
@@ -179,7 +178,6 @@ onMounted(async () => {
         form="group-form"
         type="button"
         class="px-4"
-        variant="elevated"
         color="secondary"
         @click="listMembers"
         icon
@@ -192,7 +190,6 @@ onMounted(async () => {
         form="group-form"
         type="submit"
         class="px-4"
-        variant="elevated"
         color="primary"
         icon
       >

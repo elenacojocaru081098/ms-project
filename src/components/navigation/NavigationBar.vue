@@ -15,7 +15,7 @@ const { hasCoordinatorRights } = useUserPermission()
 </script>
 
 <template>
-  <v-app-bar scroll-behavior="hide" color="primary">
+  <v-app-bar scroll-behavior="hide" color="primary" density="comfortable">
     <template #prepend>
       <v-app-bar-nav-icon @click="openNav = !openNav"></v-app-bar-nav-icon>
     </template>
@@ -27,18 +27,16 @@ const { hasCoordinatorRights } = useUserPermission()
 
   <v-navigation-drawer v-model="openNav" temporary>
     <v-list-item
-      density="compact"
       prepend-icon="mdi-cog"
       :title="(userInfo as string)"
       :subtitle="user?.personal_info.email"
-      class="py-6"
+      class="py-4"
     />
 
     <v-divider />
 
     <v-list class="py-4" nav>
       <v-list-item
-        density="compact"
         prepend-icon="mdi-home"
         title="Prima pagina"
         subtitle="Reveniti la panoul de control"
@@ -46,24 +44,21 @@ const { hasCoordinatorRights } = useUserPermission()
       />
       <v-list-item
         v-if="hasCoordinatorRights(user)"
-        density="compact"
         prepend-icon="mdi-account"
         title="Gestionare utilizatori"
         subtitle="Creati, editati & stergeti"
         to="/users"
       />
       <v-list-item
-        density="compact"
         prepend-icon="mdi-account-group"
-        title="Gestionare grupuri"
-        subtitle="Creati, editati & stergeti"
+        :title="hasCoordinatorRights(user) ? 'Gestionare grupuri' : 'Vizualizare grupuri'"
+        :subtitle="hasCoordinatorRights(user) ? 'Creati, editati & stergeti' : undefined"
         to="/groups"
       />
       <v-list-item
-        density="compact"
         prepend-icon="mdi-format-list-bulleted-type"
-        title="Gestionare studii"
-        subtitle="Creati, editati & stergeti"
+        :title="hasCoordinatorRights(user) ? 'Gestionare studii' : 'Vizualizare studii'"
+        :subtitle="hasCoordinatorRights(user) ? 'Creati, editati & stergeti' : undefined"
         to="/studies"
       />
     </v-list>

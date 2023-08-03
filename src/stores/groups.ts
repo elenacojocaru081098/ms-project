@@ -41,8 +41,9 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    *
    * @param { string } gid
    */
-  function setGroupAsCurrentGroup(gid: string) {
-    currentGroupIndex.value = groups.value.findIndex((g) => g.id === gid)
+  function setGroupAsCurrentGroup(gid: string = '') {
+    if (gid === '') currentGroupIndex.value = groups.value.length
+    else currentGroupIndex.value = groups.value.findIndex((g) => g.id === gid)
   }
 
   /**

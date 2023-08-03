@@ -21,7 +21,7 @@ function submitLoginForm() {
 </script>
 
 <template>
-  <v-card-item prepend-icon="mdi-login-variant" density="compact">
+  <v-card-item prepend-icon="mdi-login-variant">
     <v-card-title tag="section">Autentificare</v-card-title>
   </v-card-item>
   <v-card-text>
@@ -38,7 +38,6 @@ function submitLoginForm() {
           :type="field.typeProp || 'text'"
           :rules="validation.getValidationRules(loginRules, field.rulesKey)"
           v-model="field.value"
-          density="compact"
           variant="solo-filled"
           color="primary"
         />
@@ -52,7 +51,6 @@ function submitLoginForm() {
       type="submit"
       append-icon="mdi-arrow-right"
       class="px-4"
-      variant="elevated"
       color="primary"
     >
       Intra in cont
