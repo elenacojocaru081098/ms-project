@@ -20,7 +20,7 @@ function forgotPassword() {
 </script>
 
 <template>
-  <v-card-item prepend-icon="mdi-form-textbox-password" density="compact">
+  <v-card-item prepend-icon="mdi-form-textbox-password">
     <v-card-title tag="section">Resetare parola</v-card-title>
   </v-card-item>
   <v-card-text>
@@ -37,13 +37,12 @@ function forgotPassword() {
           :type="field.typeProp || 'text'"
           :rules="validation.getValidationRules(emailRules, field.rulesKey)"
           v-model="field.value"
-          density="compact"
           variant="solo-filled"
           color="primary"
-        ></v-text-field>
+        />
       </section>
     </v-form>
-    <p @click="setAuthPage('login')">Intra in cont</p>
+    <p class="text-body-2" @click="setAuthPage('login')">Intra in cont</p>
   </v-card-text>
   <v-card-actions class="justify-end">
     <v-btn
@@ -51,7 +50,6 @@ function forgotPassword() {
       type="submit"
       append-icon="mdi-arrow-right"
       class="px-4"
-      variant="elevated"
       color="primary"
     >
       Trimite email

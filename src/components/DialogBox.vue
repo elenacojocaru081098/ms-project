@@ -9,14 +9,13 @@ const { invokeAction } = dialogStore
 
 <template>
   <v-dialog v-model="show">
-    <v-card density="compact">
+    <v-card>
       <v-card-text>{{ msg }}</v-card-text>
       <v-card-actions class="justify-center">
         <v-btn
           v-for="(btn, idx) in btns"
           :key="btn.text"
           :color="btn.color"
-          density="default"
           variant="flat"
           @click="invokeAction(idx, btn.actionParams)"
         >

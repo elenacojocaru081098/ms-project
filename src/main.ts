@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import 'vuetify/styles'
 import vuetify from '~/plugins/vuetify'
 import '@mdi/font/css/materialdesignicons.min.css'
+import '@/styles/main.scss'
 
 import MSApp from './MSApp.vue'
 import router from './router'
@@ -45,10 +46,8 @@ onAuthStateChanged(auth, async (user) => {
 
   let status: string | boolean = false
 
-  if (user) {
-    const { setLoggedUserData } = useUserStore()
-    status = await setLoggedUserData(user)
-  }
+  const { setLoggedUserData } = useUserStore()
+  status = await setLoggedUserData(user)
 
   haveToInitializeApp && initializeApp()
 

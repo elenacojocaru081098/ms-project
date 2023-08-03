@@ -15,7 +15,7 @@ function submitPasswordForm() {
 </script>
 
 <template>
-  <v-card-item prepend-icon="mdi-lock" density="compact">
+  <v-card-item prepend-icon="mdi-lock">
     <v-card-title tag="section">Schimbare Parola</v-card-title>
   </v-card-item>
   <v-card-text>
@@ -31,10 +31,9 @@ function submitPasswordForm() {
           :label="field.label"
           :type="field.typeProp || 'text'"
           v-model="field.value"
-          density="compact"
           variant="solo-filled"
           color="primary"
-        ></v-text-field>
+        />
       </section>
     </v-form>
   </v-card-text>
@@ -44,7 +43,6 @@ function submitPasswordForm() {
       type="submit"
       append-icon="mdi-arrow-right"
       class="px-4"
-      variant="elevated"
       color="primary"
     >
       Schimba parola

@@ -10,10 +10,12 @@ const { logout } = useAuthStore()
 const userInfo = computed(() => {
   if (user.value) return getFullNameRole(user.value as IUser)
 })
+
+const { hasCoordinatorRights } = useUserPermission()
 </script>
 
 <template>
-  <v-app-bar scroll-behavior="hide" color="primary">
+  <v-app-bar scroll-behavior="hide" color="primary" density="comfortable">
     <template #prepend>
       <v-app-bar-nav-icon @click="openNav = !openNav"></v-app-bar-nav-icon>
     </template>
@@ -25,23 +27,40 @@ const userInfo = computed(() => {
 
   <v-navigation-drawer v-model="openNav" temporary>
     <v-list-item
-      density="compact"
       prepend-icon="mdi-cog"
       :title="(userInfo as string)"
       :subtitle="user?.personal_info.email"
-      class="py-6"
-    ></v-list-item>
+      class="py-4"
+    />
 
-    <v-divider></v-divider>
+    <v-divider />
 
     <v-list class="py-4" nav>
       <v-list-item
-        density="compact"
-        prepend-icon="mdi-account-supervisor"
+        prepend-icon="mdi-home"
+        title="Prima pagina"
+        subtitle="Reveniti la panoul de control"
+        to="/dashboard"
+      />
+      <v-list-item
+        v-if="hasCoordinatorRights(user)"
+        prepend-icon="mdi-account"
         title="Gestionare utilizatori"
         subtitle="Creati, editati & stergeti"
         to="/users"
-      ></v-list-item>
+      />
+      <v-list-item
+        prepend-icon="mdi-account-group"
+        :title="hasCoordinatorRights(user) ? 'Gestionare grupuri' : 'Vizualizare grupuri'"
+        :subtitle="hasCoordinatorRights(user) ? 'Creati, editati & stergeti' : undefined"
+        to="/groups"
+      />
+      <v-list-item
+        prepend-icon="mdi-format-list-bulleted-type"
+        :title="hasCoordinatorRights(user) ? 'Gestionare studii' : 'Vizualizare studii'"
+        :subtitle="hasCoordinatorRights(user) ? 'Creati, editati & stergeti' : undefined"
+        to="/studies"
+      />
     </v-list>
   </v-navigation-drawer>
 </template>

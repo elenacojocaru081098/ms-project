@@ -40,7 +40,7 @@ export function useFormStructure() {
       {
         label: 'Rol',
         rulesKey: 'role',
-        items: ['Participant', 'Coordonator', 'Admin'],
+        items: ['Participant', 'Coordinator', 'Admin'],
         type: 'select',
         key: 'role',
         value: null
@@ -157,10 +157,56 @@ export function useFormStructure() {
     ]
   }
 
+  /**
+   * Create group form structure
+   */
+  function getCreateGroupForm(): Array<IFormField> {
+    return [
+      {
+        label: 'Nume grup',
+        type: 'text',
+        key: 'name',
+        value: ''
+      }
+    ]
+  }
+
+  /**
+   * Create study form structure
+   */
+  async function getCreateStudyForm(): Promise<Array<IFormField>> {
+    const { getAllGroups } = useGroupsStore()
+    const groups = await getAllGroups()
+
+    return [
+      {
+        label: 'Nume studiu',
+        type: 'text',
+        key: 'title',
+        value: ''
+      },
+      {
+        label: 'Detalii/Descriere',
+        type: 'textarea',
+        key: 'details',
+        value: ''
+      },
+      {
+        label: 'Grup',
+        type: 'select',
+        items: groups,
+        key: 'group',
+        value: null
+      }
+    ]
+  }
+
   return {
     getRegisterForm,
     getLoginForm,
     getPasswordForm,
-    getForgotForm
+    getForgotForm,
+    getCreateGroupForm,
+    getCreateStudyForm
   }
 }

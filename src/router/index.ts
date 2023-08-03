@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia'
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 
 // initialize the router
@@ -11,18 +12,36 @@ const router = createRouter({
     ...authRoutes,
     {
       path: '/',
+      redirect: '/dashboard',
       component: () => import('~/layouts/DefaultLayout.vue'),
-      children: [...usersRoutes]
+      children: [
+        ...usersRoutes,
+        ...groupsRoutes,
+        ...studiesRoutes,
+        {
+          path: 'dashboard',
+          component: () => import('~/pages/HomePage.vue')
+        }
+      ]
+    },
+    {
+      path: '/error',
+      children: [...errorRoutes]
     }
   ]
 })
 
 // navigation guards
 router.beforeEach((to: RouteLocationNormalized) => {
-  const currentUser = auth.currentUser
+  const { user } = storeToRefs(useUserStore())
 
-  if (!currentUser && to.path !== '/auth/login') return { path: '/auth/login' }
-  else if (currentUser && to.path === '/auth/login') return { path: '/' }
+  if (!user.value && to.path !== '/auth/login') return { path: '/auth/login' }
+  else if (user.value && to.path === '/auth/login') return { path: '/' }
+  else if (user.value && to.path !== '/auth/login') {
+    if (to.meta && to.meta.roles && to.meta.roles !== '*')
+      if (!(to.meta.roles as Array<string>).includes(user.value.role))
+        return { path: '/error/not-authorized' }
+  }
 })
 
 export default router

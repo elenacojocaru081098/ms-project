@@ -1,11 +1,21 @@
 import { defineStore, storeToRefs } from 'pinia'
-import { doc, getDoc, updateDoc } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  documentId,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where
+} from 'firebase/firestore'
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IUser } from '@/interfaces/user'
 
 export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
   const { addModifiedTags } = useDbInfo()
+
   /**
    * Activates a user account
    *
@@ -50,6 +60,59 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   }
 
   /**
+   * Gets all the users with the specified ids
+   *
+   * @param { Array<string> } uids List of ids to check against
+   */
+  async function getParticipantsByIdList(uids: Array<string>, cond: 'in' | 'not-in' = 'in') {
+    let q
+    if (cond === 'in' && uids.length === 0) return []
+    else if (cond === 'not-in' && uids.length === 0) {
+      q = query(collection(db, 'users'), where('role', '==', 'Participant'))
+    } else {
+      q = query(
+        collection(db, 'users'),
+        where(documentId(), cond, uids),
+        where('role', '==', 'Participant')
+      )
+    }
+
+    const qss = await getDocs(q)
+    const userList: {
+      id: string
+      fname: string
+      lname: string
+      field: string
+    }[] = []
+
+    qss.forEach((d) => {
+      const data = d.data()
+
+      userList.push({
+        id: d.id,
+        fname: data.personal_info.fname,
+        lname: data.personal_info.lname,
+        field: data.personal_info.field
+      })
+    })
+
+    return userList
+  }
+
+  /**
+   * Gets all the users that are coordinators
+   */
+  async function getCoordinators() {
+    const q = query(collection(db, 'users'), where('role', '==', 'Coordinator'))
+    const qss = await getDocs(q)
+
+    const users: Array<IUser> = []
+    qss.forEach((d) => users.push({ id: d.id, ...d.data() } as IUser))
+
+    return users
+  }
+
+  /**
    * Deletes a user by their id (soft)
    *
    * @param { string } uid The db user id
@@ -76,15 +139,6 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
         color: CUSTOM_LIGHT_COLORS['error-container']
       })
     }
-  }
-
-  /**
-   * Deletes a user by their id (hard)
-   *
-   * @param { string } uid The db user id
-   */
-  async function hardDeleteUserById(uid: string) {
-    // TODO: implement hard delete
   }
 
   /**
@@ -123,6 +177,12 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     }
   }
 
+  /**
+   * Changes the role of a user
+   *
+   * @param { string } id
+   * @param { 'Admin' | 'Coordinator' | 'Participant' } role
+   */
   async function changeUserRole(id: string, role: 'Admin' | 'Coordinator' | 'Participant') {
     const u = {
       role,
@@ -150,8 +210,9 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
   return {
     activateAccount,
     getUserById,
+    getParticipantsByIdList,
+    getCoordinators,
     softDeleteUserById,
-    hardDeleteUserById,
     updateUser,
     changeUserRole
   }
