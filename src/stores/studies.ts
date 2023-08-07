@@ -1,6 +1,6 @@
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IStudy, IStudyQuestion } from '@/interfaces/study'
-import { addDoc, collection, documentId, getDocs, query, where } from 'firebase/firestore'
+import { addDoc, collection, doc, documentId, getDocs, query, where } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 
 export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
@@ -56,6 +56,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    * @param { Array<string> } sids List of study ids
    */
   async function getStudiesByIdList(sids: Array<string>) {
+    // TODO: get "questions" collection as array of study
     if (!sids.length) return []
 
     const q = query(collection(db, 'studies'), where(documentId(), 'in', sids))
@@ -111,6 +112,22 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     currentStudy.value.questions.push(q)
   }
 
+  /**
+   * Saves the study's questions to db
+   */
+  function addQuestionsToStudyDB() {
+    try {
+      console.log(currentStudy.value.questions)
+      const studyRef = doc(db, 'studies', currentStudy.value.id)
+      addDoc(collection(studyRef, 'questions'), {
+        questions: currentStudy.value.questions,
+        ...addTimestamps()
+      })
+    } catch (e: any) {
+      console.error(e.message)
+    }
+  }
+
   return {
     studies,
     studiesInitialized,
@@ -120,6 +137,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     fetchCurrentUserStudies,
     createStudy,
     updateStudy,
-    addQuestionToStudy
+    addQuestionToStudy,
+    addQuestionsToStudyDB
   }
 })

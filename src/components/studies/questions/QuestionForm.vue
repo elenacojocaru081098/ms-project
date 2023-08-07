@@ -10,7 +10,12 @@ const props = defineProps<{
 const valid = ref<boolean>(false)
 const studiesStore = useStudiesStore()
 const { currentStudy, studiesInitialized } = storeToRefs(studiesStore)
-const { addQuestionToStudy, fetchCurrentUserStudies, setStudyAsCurrentStudy } = studiesStore
+const {
+  addQuestionToStudy,
+  addQuestionsToStudyDB,
+  fetchCurrentUserStudies,
+  setStudyAsCurrentStudy
+} = studiesStore
 
 const answerType = ref<string>('')
 const formStructure = useFormStructure()
@@ -48,9 +53,11 @@ function addQuestion() {
   q.values =
     answerType.value === 'range'
       ? ({ min: 0, max: 0, unit: '' } as IAnswerRange)
-      : answerType.value !== 'text'
+      : answerType.value === 'multiple' || answerType.value === 'unique'
       ? ({ options: [] } as IAnswerOptions)
-      : undefined
+      : null
+
+  console.log(Object.prototype.hasOwnProperty.call(q.values, 'options'))
 
   q.values &&
     answerFields.value.forEach((af) => {
@@ -104,7 +111,9 @@ onBeforeMount(async () => {
             variant="solo-filled"
             color="on-background"
             theme="light"
-            @update:model-value="getAnswerFields(field.value || '')"
+            @update:model-value="
+              getAnswerFields((field.value as 'range' | 'unique' | 'multiple' | 'text') || 'text')
+            "
           />
         </section>
         <section class="answer_fields" v-if="answerFields.length > 0">
@@ -136,6 +145,12 @@ onBeforeMount(async () => {
         append-icon="mdi-check"
         class="px-4"
         color="primary"
+        @click="
+          () => {
+            addQuestion()
+            addQuestionsToStudyDB()
+          }
+        "
       >
         Salveaza
       </v-btn>
