@@ -1,5 +1,5 @@
 import type { IBusToast } from '@/interfaces/bus_events'
-import type { IStudy } from '@/interfaces/study'
+import type { IStudy, IStudyQuestion } from '@/interfaces/study'
 import { addDoc, collection, documentId, getDocs, query, where } from 'firebase/firestore'
 import { defineStore } from 'pinia'
 
@@ -99,7 +99,17 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     }
   }
 
+  // TODO: implement this
   async function updateStudy() {}
+
+  /**
+   * Adds a question to the current study's state
+   *
+   * @param q
+   */
+  function addQuestionToStudy(q: IStudyQuestion) {
+    currentStudy.value.questions.push(q)
+  }
 
   return {
     studies,
@@ -109,6 +119,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     getAllStudies,
     fetchCurrentUserStudies,
     createStudy,
-    updateStudy
+    updateStudy,
+    addQuestionToStudy
   }
 })

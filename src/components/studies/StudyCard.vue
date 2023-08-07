@@ -9,8 +9,12 @@ const studiesStore = useStudiesStore()
 const { setStudyAsCurrentStudy } = studiesStore
 const { currentStudy } = storeToRefs(studiesStore)
 
+function goToAddQuestion() {
+  router.push({ path: `/studies/${props.studyId}/questions/add` })
+}
+
 function goToEdit() {
-  router.push({ path: `/studies/${currentStudy.value.id}` })
+  router.push({ path: `/studies/${props.studyId}` })
 }
 
 onBeforeMount(() => {
@@ -40,6 +44,7 @@ const { hasCoordinatorRights } = useUserPermission()
           append-icon="mdi-help-box-multiple-outline"
           class="px-4"
           color="secondary"
+          @click="goToAddQuestion"
         >
           Intrebari
         </v-btn>

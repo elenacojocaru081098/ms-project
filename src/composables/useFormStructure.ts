@@ -201,12 +201,98 @@ export function useFormStructure() {
     ]
   }
 
+  /**
+   * Create question form structure
+   */
+  function getAddQuestionForm() {
+    return [
+      {
+        label: 'Intrebare',
+        type: 'textarea',
+        key: 'text',
+        value: ''
+      },
+      {
+        label: 'Tip raspuns',
+        type: 'select',
+        items: [
+          {
+            title: 'Interval',
+            value: 'range'
+          },
+          {
+            title: 'Unic',
+            value: 'unique'
+          },
+          {
+            title: 'Multiplu',
+            value: 'multiple'
+          },
+          {
+            title: 'Text',
+            value: 'text'
+          }
+        ],
+        key: 'answer_type',
+        value: null
+      }
+    ]
+  }
+
+  /**
+   * Create answer option form structure
+   *
+   * @param { 'range' | 'unique' | 'multiple' | 'text' } answer_type
+   */
+  function getAdditionalQuestionFields(
+    answer_type: 'range' | 'unique' | 'multiple' | 'text' = 'text'
+  ) {
+    switch (answer_type) {
+      case 'range':
+        return [
+          {
+            label: 'Minim',
+            type: 'text',
+            key: 'min',
+            value: ''
+          },
+          {
+            label: 'Maxim',
+            type: 'text',
+            key: 'max',
+            value: ''
+          },
+          {
+            label: 'Unitate',
+            type: 'text',
+            key: 'unit',
+            value: ''
+          }
+        ]
+      case 'unique':
+      case 'multiple':
+        return [
+          {
+            label: 'Varianta',
+            type: 'text',
+            key: 'option',
+            value: ''
+          }
+        ]
+      default: {
+        return []
+      }
+    }
+  }
+
   return {
     getRegisterForm,
     getLoginForm,
     getPasswordForm,
     getForgotForm,
     getCreateGroupForm,
-    getCreateStudyForm
+    getCreateStudyForm,
+    getAddQuestionForm,
+    getAdditionalQuestionFields
   }
 }

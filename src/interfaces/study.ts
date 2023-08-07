@@ -9,6 +9,7 @@ export interface IAnswerOptions {
 }
 
 export interface IStudyQuestion {
+  id: string
   text: string
   answer_type: 'range' | 'unique' | 'multiple' | 'text'
   values?: IAnswerRange | IAnswerOptions
