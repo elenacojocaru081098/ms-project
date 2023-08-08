@@ -1,6 +1,15 @@
 import type { IBusToast } from '@/interfaces/bus_events'
 import type { IStudy, IStudyQuestion } from '@/interfaces/study'
-import { addDoc, collection, doc, documentId, getDocs, query, where } from 'firebase/firestore'
+import {
+  addDoc,
+  collection,
+  doc,
+  documentId,
+  getDocs,
+  query,
+  where,
+  writeBatch
+} from 'firebase/firestore'
 import { defineStore } from 'pinia'
 
 export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
@@ -56,10 +65,9 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    * @param { Array<string> } sids List of study ids
    */
   async function getStudiesByIdList(sids: Array<string>) {
-    // TODO: get "questions" collection as array of study
     if (!sids.length) return []
 
-    const q = query(collection(db, 'studies'), where(documentId(), 'in', sids))
+    const q = query(collection(db, COLLECTIONS.STUDIES), where(documentId(), 'in', sids))
     const qss = await getDocs(q)
 
     qss.forEach((d) => {
@@ -75,7 +83,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    */
   async function createStudy(study: IStudy, gid: string) {
     try {
-      const s = await addDoc(collection(db, 'studies'), {
+      const s = await addDoc(collection(db, COLLECTIONS.STUDIES), {
         title: study.title,
         details: study.details,
         questions: study.questions,
@@ -103,25 +111,68 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   // TODO: implement this
   async function updateStudy() {}
 
+  const newQuestions = ref<Array<IStudyQuestion>>([])
+
   /**
    * Adds a question to the current study's state
    *
    * @param q
    */
   function addQuestionToStudy(q: IStudyQuestion) {
-    currentStudy.value.questions.push(q)
+    newQuestions.value.push(q)
   }
 
   /**
    * Saves the study's questions to db
    */
   function addQuestionsToStudyDB() {
+    if (!currentStudy.value.questions) currentStudy.value.questions = []
+    const noOfExistingQuestions = currentStudy.value.questions.length
+    const studyRef = doc(db, COLLECTIONS.STUDIES, currentStudy.value.id)
+
     try {
-      console.log(currentStudy.value.questions)
-      const studyRef = doc(db, 'studies', currentStudy.value.id)
-      addDoc(collection(studyRef, 'questions'), {
-        questions: currentStudy.value.questions,
-        ...addTimestamps()
+      const batch = writeBatch(db)
+
+      newQuestions.value.forEach((q, idx) => {
+        const qId = (noOfExistingQuestions + idx + 1).toString()
+        const qRef = doc(collection(studyRef, COLLECTIONS.QUESTIONS), qId)
+        batch.set(qRef, {
+          ...q,
+          ...addTimestamps()
+        })
+        q.id = qId
+      })
+
+      currentStudy.value.questions.push(...newQuestions.value)
+      newQuestions.value.length = 0
+
+      batch.commit()
+    } catch (e: any) {
+      console.error(e.message)
+    }
+  }
+
+  /**
+   * Fetches the current study's questions
+   */
+  async function fetchCurrentStudyQuestions() {
+    if (!currentStudy.value.questions) currentStudy.value.questions = []
+
+    try {
+      // Query a reference to a subcollection
+      const qss = await getDocs(
+        collection(db, COLLECTIONS.STUDIES, currentStudy.value.id, COLLECTIONS.QUESTIONS)
+      )
+
+      qss.forEach((d) => {
+        const data = d.data()
+
+        currentStudy.value.questions.push({
+          id: d.id,
+          text: data.text,
+          answer_type: data.answer_type,
+          values: data.values
+        })
       })
     } catch (e: any) {
       console.error(e.message)
@@ -138,6 +189,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     createStudy,
     updateStudy,
     addQuestionToStudy,
-    addQuestionsToStudyDB
+    addQuestionsToStudyDB,
+    fetchCurrentStudyQuestions
   }
 })

@@ -63,7 +63,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
   async function fetchUserGroups(u: IUser) {
     const column: string = u.role === 'Coordinator' ? 'coords' : 'users'
 
-    const q = query(collection(db, 'groups'), where(column, 'array-contains', u.id))
+    const q = query(collection(db, COLLECTIONS.GROUPS), where(column, 'array-contains', u.id))
 
     const qss = await getDocs(q)
     if (groupsInitialized.value) groups.value.length = 0
@@ -109,7 +109,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    */
   async function deleteGroupById(gid: string) {
     try {
-      const group = doc(db, 'groups', gid)
+      const group = doc(db, COLLECTIONS.GROUPS, gid)
       await deleteDoc(group)
 
       const g = groups.value.find((g) => g.id === gid)
@@ -144,7 +144,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     }
 
     try {
-      const group = doc(db, 'groups', g.id)
+      const group = doc(db, COLLECTIONS.GROUPS, g.id)
       await updateDoc(group, { ...g })
 
       busToast.emit({
@@ -173,7 +173,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
       ...addModifiedTags()
     }
 
-    const group = doc(db, 'groups', gid)
+    const group = doc(db, COLLECTIONS.GROUPS, gid)
     await updateDoc(group, { ...g })
   }
 
@@ -199,7 +199,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
     }
 
     try {
-      const group = doc(db, 'groups', gid)
+      const group = doc(db, COLLECTIONS.GROUPS, gid)
       await updateDoc(group, { ...g })
 
       return true
@@ -217,7 +217,7 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
    */
   async function createGroup(group: IGroup) {
     try {
-      await addDoc(collection(db, 'groups'), {
+      await addDoc(collection(db, COLLECTIONS.GROUPS), {
         name: group.name,
         users: group.users,
         coords: group.coords,

@@ -15,6 +15,13 @@ const USER_STATUS = {
   DELETED: 'Deleted' as 'Pending' | 'Active' | 'Deleted'
 }
 
+const COLLECTIONS = {
+  GROUPS: 'groups',
+  QUESTIONS: 'questions',
+  STUDIES: 'studies',
+  USERS: 'users'
+}
+
 // toast notification messages
 const NOTIFICATION_MESSAGES = {
   LOGIN_FAILED: 'Date de autentificare incorecte',
@@ -53,4 +60,4 @@ const PINIA_STORE_KEYS = {
   USERS: 'ms:pinia-store:Users'
 }
 
-export { BUS_EVENTS, CONSTANTS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS, USER_STATUS }
+export { BUS_EVENTS, CONSTANTS, COLLECTIONS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS, USER_STATUS }

@@ -14,7 +14,8 @@ const {
   addQuestionToStudy,
   addQuestionsToStudyDB,
   fetchCurrentUserStudies,
-  setStudyAsCurrentStudy
+  setStudyAsCurrentStudy,
+  fetchCurrentStudyQuestions
 } = studiesStore
 
 const answerType = ref<string>('')
@@ -40,7 +41,6 @@ function addQuestion() {
 
   // sets the question fields
   let q: IStudyQuestion = {
-    id: '',
     text: '',
     answer_type: 'text'
   }
@@ -56,8 +56,6 @@ function addQuestion() {
       : answerType.value === 'multiple' || answerType.value === 'unique'
       ? ({ options: [] } as IAnswerOptions)
       : null
-
-  console.log(Object.prototype.hasOwnProperty.call(q.values, 'options'))
 
   q.values &&
     answerFields.value.forEach((af) => {
@@ -77,11 +75,11 @@ function addQuestion() {
 onBeforeMount(async () => {
   if (!studiesInitialized.value) await fetchCurrentUserStudies()
   setStudyAsCurrentStudy(router.currentRoute.value.params.studyId as string)
+  fetchCurrentStudyQuestions()
 })
 </script>
 
 <template>
-  {{ currentStudy?.questions }}
   <v-card>
     <v-card-item prepend-icon="mdi-help-box-multiple-outline">
       <v-card-title tag="section">Creeaza o intrebare</v-card-title>

@@ -33,7 +33,7 @@ export const useAuthStore = defineStore(PINIA_STORE_KEYS.AUTH, () => {
     try {
       const userCreds = await createUserWithEmailAndPassword(secondAuth, data.email, data.pnc)
 
-      await setDoc(doc(db, 'users', userCreds.user.uid), {
+      await setDoc(doc(db, COLLECTIONS.USERS, userCreds.user.uid), {
         role: data.role,
         status: 'Pending',
         personal_info: {
