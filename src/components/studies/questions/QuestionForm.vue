@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const valid = ref<boolean>(false)
 const studiesStore = useStudiesStore()
-const { currentStudy, studiesInitialized } = storeToRefs(studiesStore)
+const { studiesInitialized } = storeToRefs(studiesStore)
 const {
   addQuestionToStudy,
   addQuestionsToStudyDB,

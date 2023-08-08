@@ -3,6 +3,7 @@ import type { IStudy, IStudyQuestion } from '@/interfaces/study'
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   documentId,
   getDocs,
@@ -125,16 +126,20 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   /**
    * Saves the study's questions to db
    */
-  function addQuestionsToStudyDB() {
+  async function addQuestionsToStudyDB() {
     if (!currentStudy.value.questions) currentStudy.value.questions = []
     const noOfExistingQuestions = currentStudy.value.questions.length
     const studyRef = doc(db, COLLECTIONS.STUDIES, currentStudy.value.id)
+    const lastId =
+      noOfExistingQuestions !== 0
+        ? parseInt(currentStudy.value.questions[noOfExistingQuestions - 1].id!)
+        : 0
 
     try {
       const batch = writeBatch(db)
 
-      newQuestions.value.forEach((q, idx) => {
-        const qId = (noOfExistingQuestions + idx + 1).toString()
+      newQuestions.value.forEach((q) => {
+        const qId = (lastId + 1).toString()
         const qRef = doc(collection(studyRef, COLLECTIONS.QUESTIONS), qId)
         batch.set(qRef, {
           ...q,
@@ -146,9 +151,54 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
       currentStudy.value.questions.push(...newQuestions.value)
       newQuestions.value.length = 0
 
-      batch.commit()
+      await batch.commit()
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.STUDY_QUESTION_ADD_SUCCEEDED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
     } catch (e: any) {
       console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.STUDY_QUESTION_ADD_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+    }
+  }
+
+  /**
+   * Deletes a question
+   *
+   * @param { string } qid
+   */
+  async function deleteQuestionFromStudy(qid: string) {
+    try {
+      const question = doc(
+        db,
+        COLLECTIONS.STUDIES,
+        currentStudy.value.id,
+        COLLECTIONS.QUESTIONS,
+        qid
+      )
+
+      await deleteDoc(question)
+      const questions = currentStudy.value.questions
+
+      const q = questions.find((q) => q.id === qid)
+      q && questions.splice(questions.indexOf(q), 1)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.STUDY_QUESTION_DELETE_SUCCEEDED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+    } catch (e: any) {
+      console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.STUDY_QUESTION_DELETE_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
     }
   }
 
@@ -159,7 +209,6 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     if (!currentStudy.value.questions) currentStudy.value.questions = []
 
     try {
-      // Query a reference to a subcollection
       const qss = await getDocs(
         collection(db, COLLECTIONS.STUDIES, currentStudy.value.id, COLLECTIONS.QUESTIONS)
       )
@@ -190,6 +239,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     updateStudy,
     addQuestionToStudy,
     addQuestionsToStudyDB,
+    deleteQuestionFromStudy,
     fetchCurrentStudyQuestions
   }
 })

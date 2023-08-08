@@ -47,7 +47,11 @@ const NOTIFICATION_MESSAGES = {
   GROUP_UPDATED: 'Grup actualizat cu succes',
   GROUP_UPDATED_FAIL: 'Grupul nu s-a putut actualiza',
   STUDY_CREATED_SUCCEEDED: 'Studiul a fost creat cu succes',
-  STUDY_CREATED_FAILED: 'Studiul nu a putut fi creat'
+  STUDY_CREATED_FAILED: 'Studiul nu a putut fi creat',
+  STUDY_QUESTION_ADD_SUCCEEDED: 'Intrebarea a fost adaugata cu succes',
+  STUDY_QUESTION_ADD_FAILED: 'Intrebarea nu a putut fi adaugata',
+  STUDY_QUESTION_DELETE_SUCCEEDED: 'Intrebarea a fost stearsa cu succes',
+  STUDY_QUESTION_DELETE_FAILED: 'Intrebarea nu a putut fi stearsa'
 }
 
 // keys for all the stores

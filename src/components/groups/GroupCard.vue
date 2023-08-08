@@ -13,9 +13,11 @@ const { deleteGroupById, updateGroupCoordinators, setGroupAsCurrentGroup } = gro
 
 /**
  * Deletes a group
+ *
+ * @param { string } gid
  */
-function deleteGroup() {
-  deleteGroupById(currentGroup.value.id)
+function deleteGroup(gid: string) {
+  deleteGroupById(gid)
 }
 
 /**
