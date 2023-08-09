@@ -2,6 +2,11 @@
  * Exposes functions to fetch form validation rules
  */
 export function useValidationRules() {
+  function requiredField(val: any, err: string) {
+    if (val) return true
+    return err
+  }
+
   /**
    * Register form validation rules
    */
@@ -46,12 +51,7 @@ export function useValidationRules() {
           return validate ? true : 'CNP invalid'
         }
       ],
-      role: [
-        (value: string) => {
-          if (value) return true
-          return 'Rolul este camp obligatoriu'
-        }
-      ]
+      role: [(value: string) => requiredField(value, 'Rolul este camp obligatoriu')]
     }
   }
 
@@ -60,18 +60,8 @@ export function useValidationRules() {
    */
   function getLoginRules() {
     return {
-      email: [
-        (value: string) => {
-          if (value) return true
-          return 'Emailul este obligatoriu'
-        }
-      ],
-      pass: [
-        (value: string) => {
-          if (value) return true
-          return 'Parola este obligatorie'
-        }
-      ]
+      email: [(value: string) => requiredField(value, 'Emailul este obligatoriu')],
+      pass: [(value: string) => requiredField(value, 'Parola este obligatorie')]
     }
   }
 
@@ -79,13 +69,18 @@ export function useValidationRules() {
    * Login form validation rules
    */
   function getForgotRules() {
+    return getLoginRules().email
+  }
+
+  /**
+   * Add question form validation rules
+   */
+  function getAddQuestionRules() {
     return {
-      email: [
-        (value: string) => {
-          if (value) return true
-          return 'Emailul este obligatoriu'
-        }
-      ]
+      text: [(value: string) => requiredField(value, 'Textul intrebarii este obligatoriu')],
+      answer_type: [(value: string) => requiredField(value, 'Tipul de raspuns este obligatoriu')],
+      min: [(value: number) => requiredField(value, 'Minimul intervalului este obligatoriu')],
+      max: [(value: number) => requiredField(value, 'Maximul intervalului este obligatoriu')]
     }
   }
 
@@ -100,6 +95,7 @@ export function useValidationRules() {
     getRegisterRules,
     getLoginRules,
     getForgotRules,
-    getValidationRules
+    getValidationRules,
+    getAddQuestionRules
   }
 }

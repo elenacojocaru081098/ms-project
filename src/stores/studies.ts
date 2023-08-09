@@ -222,6 +222,10 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
           answer_type: data.answer_type,
           values: data.values
         })
+
+        currentStudy.value.questions.sort(
+          (a, b) => parseInt(a.id as string) - parseInt(b.id as string)
+        )
       })
     } catch (e: any) {
       console.error(e.message)

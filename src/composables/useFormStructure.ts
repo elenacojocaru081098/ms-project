@@ -210,6 +210,7 @@ export function useFormStructure() {
         label: 'Intrebare',
         type: 'textarea',
         key: 'text',
+        rulesKey: 'text',
         value: ''
       },
       {
@@ -234,6 +235,7 @@ export function useFormStructure() {
           }
         ],
         key: 'answer_type',
+        rulesKey: 'answer_type',
         value: null
       }
     ]
@@ -254,18 +256,21 @@ export function useFormStructure() {
             label: 'Minim',
             type: 'text',
             key: 'min',
+            rulesKey: 'min',
             value: ''
           },
           {
             label: 'Maxim',
             type: 'text',
             key: 'max',
+            rulesKey: 'max',
             value: ''
           },
           {
             label: 'Unitate',
             type: 'text',
             key: 'unit',
+            rulesKey: 'unit',
             value: ''
           }
         ]
@@ -276,6 +281,7 @@ export function useFormStructure() {
             label: 'Varianta',
             type: 'text',
             key: 'option',
+            rulesKey: 'option',
             value: ''
           }
         ]

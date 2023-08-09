@@ -7,6 +7,8 @@ const props = defineProps<{
   formFields: Array<IFormField>
 }>()
 
+const validation = useValidationRules()
+const validationRules = validation.getAddQuestionRules()
 const valid = ref<boolean>(false)
 const studiesStore = useStudiesStore()
 const { studiesInitialized } = storeToRefs(studiesStore)
@@ -72,6 +74,13 @@ function addQuestion() {
   answerFields.value = formStructure.getAdditionalQuestionFields()
 }
 
+function saveQuestions() {
+  if (!valid.value) return
+
+  addQuestion()
+  addQuestionsToStudyDB()
+}
+
 onBeforeMount(async () => {
   if (!studiesInitialized.value) await fetchCurrentUserStudies()
   setStudyAsCurrentStudy(router.currentRoute.value.params.studyId as string)
@@ -88,13 +97,14 @@ onBeforeMount(async () => {
       <v-form
         id="question-form"
         @submit.prevent="addQuestion"
-        validate-on="blur"
+        validate-on="input"
         v-model:model-value="valid"
       >
         <section v-for="(field, idx) in formFields" :key="idx">
           <v-textarea
             v-if="field.type === 'textarea'"
             :label="field.label"
+            :rules="validation.getValidationRules(validationRules, field.rulesKey)"
             v-model="field.value"
             variant="solo-filled"
             color="primary"
@@ -102,6 +112,7 @@ onBeforeMount(async () => {
           <v-autocomplete
             v-if="field.type === 'select'"
             :label="field.label"
+            :rules="validation.getValidationRules(validationRules, field.rulesKey)"
             :items="field.items"
             item-title="title"
             item-value="value"
@@ -119,6 +130,7 @@ onBeforeMount(async () => {
             v-for="(af, idx) in answerFields"
             :key="idx"
             :label="af.label"
+            :rules="validation.getValidationRules(validationRules, af.rulesKey)"
             v-model="af.value"
             variant="solo-filled"
             color="primary"
@@ -143,12 +155,7 @@ onBeforeMount(async () => {
         append-icon="mdi-check"
         class="px-4"
         color="primary"
-        @click="
-          () => {
-            addQuestion()
-            addQuestionsToStudyDB()
-          }
-        "
+        @click="saveQuestions"
       >
         Salveaza
       </v-btn>
