@@ -11,7 +11,7 @@ export const studiesRoutes = [
     }
   },
   {
-    path: '/studies/:id',
+    path: '/studies/:studyId',
     name: 'Edit Study',
     components: {
       default: () => import('~/pages/studies/EditStudyPage.vue')
@@ -46,12 +46,19 @@ export const studiesRoutes = [
     meta: {
       roles: ['Coordinator', 'Admin']
     }
+  },
+  {
+    path: '/studies/:studyId/answer',
+    name: 'Answer Study',
+    components: {
+      default: () => import('~/pages/studies/StartStudyPage.vue')
+    }
+  },
+  {
+    path: '/studies/:studyId/answer/questions',
+    name: 'Answer Question',
+    components: {
+      default: () => import('~/pages/studies/questions/AnswerQuestionPage.vue')
+    }
   }
-  // {
-  //   path: '/studies/answer/:id',
-  //   name: 'Answer Study',
-  //   components: {
-  //     // default: () => import('~/pages/groups/GroupsPage.vue')
-  //   }
-  // }
 ]

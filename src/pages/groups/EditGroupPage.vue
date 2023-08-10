@@ -2,8 +2,8 @@
 import { storeToRefs } from 'pinia'
 
 const groupsStore = useGroupsStore()
-const { groupsInitialized, currentGroup } = storeToRefs(groupsStore)
-const { updateGroup: updateDBGroup, fetchCurrentUserGroups, setGroupAsCurrentGroup } = groupsStore
+const { currentGroup } = storeToRefs(groupsStore)
+const { updateGroup: updateDBGroup } = groupsStore
 const formFields = ref(useFormStructure().getCreateGroupForm())
 
 const computedFormFields = computed(() => {
@@ -17,11 +17,6 @@ const computedFormFields = computed(() => {
 function updateGroup() {
   updateDBGroup(currentGroup.value)
 }
-
-onBeforeMount(async () => {
-  if (!groupsInitialized.value) await fetchCurrentUserGroups()
-  setGroupAsCurrentGroup(router.currentRoute.value.params.id as string)
-})
 </script>
 
 <template>

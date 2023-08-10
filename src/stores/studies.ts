@@ -23,7 +23,6 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   // studies of the current user (creator/member)
   const studies = ref<Array<IStudy>>([])
   const studiesInitialized = ref<boolean>(false)
-  fetchCurrentUserStudies()
 
   // current study we're working on
   const currentStudyIndex = ref<number>(0)
@@ -113,6 +112,29 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   async function updateStudy() {}
 
   const newQuestions = ref<Array<IStudyQuestion>>([])
+  const studyQuestions = computed<Array<IStudyQuestion>>(() => currentStudy.value?.questions)
+  const currentQuestionIndex = ref<number>(0)
+  const currentQuestion = computed<IStudyQuestion>(() =>
+    studyQuestions.value ? studyQuestions.value[currentQuestionIndex.value] : ({} as IStudyQuestion)
+  )
+
+  /**
+   * Sets a question as the current question
+   *
+   * @param { string } qid
+   */
+  function setQuestionAsCurrentQuestion(qid: string) {
+    currentQuestionIndex.value = studyQuestions.value.findIndex((q) => q.id === qid)
+  }
+
+  /**
+   * Sets the current question index
+   *
+   * @param { number } idx
+   */
+  function setCurrentQuestionIndex(idx: number) {
+    currentQuestionIndex.value = idx
+  }
 
   /**
    * Adds a question to the current study's state
@@ -127,12 +149,13 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    * Saves the study's questions to db
    */
   async function addQuestionsToStudyDB() {
-    if (!currentStudy.value.questions) currentStudy.value.questions = []
-    const noOfExistingQuestions = currentStudy.value.questions.length
+    if (!studyQuestions.value.length) currentStudy.value.questions = []
+
+    const noOfExistingQuestions = studyQuestions.value.length
     const studyRef = doc(db, COLLECTIONS.STUDIES, currentStudy.value.id)
     const lastId =
       noOfExistingQuestions !== 0
-        ? parseInt(currentStudy.value.questions[noOfExistingQuestions - 1].id!)
+        ? parseInt(studyQuestions.value[noOfExistingQuestions - 1].id!)
         : 0
 
     try {
@@ -183,7 +206,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
       )
 
       await deleteDoc(question)
-      const questions = currentStudy.value.questions
+      const questions = studyQuestions.value
 
       const q = questions.find((q) => q.id === qid)
       q && questions.splice(questions.indexOf(q), 1)
@@ -206,7 +229,8 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    * Fetches the current study's questions
    */
   async function fetchCurrentStudyQuestions() {
-    if (!currentStudy.value.questions) currentStudy.value.questions = []
+    if (!studyQuestions.value) currentStudy.value.questions = []
+    else if (studyQuestions.value.length > 0) return
 
     try {
       const qss = await getDocs(
@@ -241,6 +265,11 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     fetchCurrentUserStudies,
     createStudy,
     updateStudy,
+    studyQuestions,
+    currentQuestionIndex,
+    currentQuestion,
+    setQuestionAsCurrentQuestion,
+    setCurrentQuestionIndex,
     addQuestionToStudy,
     addQuestionsToStudyDB,
     deleteQuestionFromStudy,

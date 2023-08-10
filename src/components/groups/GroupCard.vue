@@ -3,13 +3,13 @@ import { CONSTANTS } from '@/constants'
 import type { IUser } from '@/interfaces/user'
 import { storeToRefs } from 'pinia'
 
-const props = defineProps<{
+defineProps<{
   groupId: string
 }>()
 
 const groupsStore = useGroupsStore()
 const { currentGroup } = storeToRefs(groupsStore)
-const { deleteGroupById, updateGroupCoordinators, setGroupAsCurrentGroup } = groupsStore
+const { deleteGroupById, updateGroupCoordinators } = groupsStore
 
 /**
  * Deletes a group
@@ -90,10 +90,9 @@ const coords = ref<Array<IUser>>([])
  */
 onBeforeMount(async () => {
   coords.value = await useUsersStore().getCoordinators()
-  setGroupAsCurrentGroup(props.groupId)
 })
 
-const { hasCoordinatorRights } = useUserPermission()
+const { hasCoordinatorRights, isParticipant } = useUserPermission()
 const { user } = storeToRefs(useUserStore())
 </script>
 
@@ -135,11 +134,7 @@ const { user } = storeToRefs(useUserStore())
         </section>
       </v-card-title>
       <v-card-subtitle class="text-subtitle-2">
-        {{
-          `${currentGroup.users.length} ${
-            currentGroup.users.length === 1 ? 'participant' : 'participanti'
-          }`
-        }}
+        <GroupCardInfo />
       </v-card-subtitle>
       <v-card-text v-if="showCoordsList">
         <v-autocomplete
@@ -154,6 +149,9 @@ const { user } = storeToRefs(useUserStore())
           multiple
           @update:model-value="updateCoordsList()"
         />
+      </v-card-text>
+      <v-card-text v-if="isParticipant(user)" class="pa-2">
+        <GroupCardStudies />
       </v-card-text>
     </v-card-item>
   </v-card>

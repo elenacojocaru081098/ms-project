@@ -6,7 +6,6 @@ const props = defineProps<{
 }>()
 
 const studiesStore = useStudiesStore()
-const { setStudyAsCurrentStudy } = studiesStore
 const { currentStudy } = storeToRefs(studiesStore)
 
 function goToAddQuestion() {
@@ -17,9 +16,9 @@ function goToEdit() {
   router.push({ path: `/studies/${props.studyId}` })
 }
 
-onBeforeMount(() => {
-  setStudyAsCurrentStudy(props.studyId)
-})
+function startStudy() {
+  router.push({ path: `/studies/${props.studyId}/answer` })
+}
 
 const { user } = useUserStore()
 const { hasCoordinatorRights } = useUserPermission()
@@ -66,6 +65,7 @@ const { hasCoordinatorRights } = useUserPermission()
           append-icon="mdi-arrow-right"
           class="px-4"
           color="secondary"
+          @click="startStudy"
         >
           Raspunde
         </v-btn>

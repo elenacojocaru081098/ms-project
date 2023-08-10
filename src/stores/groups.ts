@@ -22,7 +22,6 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
   // groups of the current user
   const groups = ref<Array<IGroup>>([])
   const groupsInitialized = ref<boolean>(false)
-  fetchCurrentUserGroups()
 
   // current group we're working on
   const currentGroupIndex = ref<number>(0)

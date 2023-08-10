@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { IFormField } from '@/interfaces/form'
 import type { IAnswerOptions, IAnswerRange, IStudyQuestion } from '@/interfaces/study'
-import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   formFields: Array<IFormField>
@@ -11,14 +10,7 @@ const validation = useValidationRules()
 const validationRules = validation.getAddQuestionRules()
 const valid = ref<boolean | null>(null)
 const studiesStore = useStudiesStore()
-const { studiesInitialized } = storeToRefs(studiesStore)
-const {
-  addQuestionToStudy,
-  addQuestionsToStudyDB,
-  fetchCurrentUserStudies,
-  setStudyAsCurrentStudy,
-  fetchCurrentStudyQuestions
-} = studiesStore
+const { addQuestionToStudy, addQuestionsToStudyDB } = studiesStore
 
 const answerType = ref<string>('')
 const { getAdditionalQuestionFields } = useFormStructure()
@@ -94,12 +86,6 @@ function addAnotherField() {
     ...getAdditionalQuestionFields(answerType.value as 'range' | 'unique' | 'multiple' | 'text')
   )
 }
-
-onBeforeMount(async () => {
-  if (!studiesInitialized.value) await fetchCurrentUserStudies()
-  setStudyAsCurrentStudy(router.currentRoute.value.params.studyId as string)
-  fetchCurrentStudyQuestions()
-})
 </script>
 
 <template>

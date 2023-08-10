@@ -4,10 +4,10 @@ import { storeToRefs } from 'pinia'
 
 const formFields = ref<Array<IFormField>>(useFormStructure().getAddQuestionForm())
 const studiesStore = useStudiesStore()
-const { currentStudy } = storeToRefs(studiesStore)
+const { studyQuestions } = storeToRefs(studiesStore)
 </script>
 
 <template>
   <QuestionForm :form-fields="formFields" />
-  <QuestionCard v-for="q in currentStudy?.questions" :key="q.id" :question="q" />
+  <QuestionCard v-for="q in studyQuestions" :key="q.id" :question="q" />
 </template>
