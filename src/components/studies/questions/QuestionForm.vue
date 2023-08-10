@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const validation = useValidationRules()
 const validationRules = validation.getAddQuestionRules()
-const valid = ref<boolean>(false)
+const valid = ref<boolean | null>(null)
 const studiesStore = useStudiesStore()
 const { studiesInitialized } = storeToRefs(studiesStore)
 const {
@@ -21,8 +21,8 @@ const {
 } = studiesStore
 
 const answerType = ref<string>('')
-const formStructure = useFormStructure()
-const answerFields = ref<Array<IFormField>>(formStructure.getAdditionalQuestionFields())
+const { getAdditionalQuestionFields } = useFormStructure()
+const answerFields = ref<Array<IFormField>>(getAdditionalQuestionFields())
 
 /**
  * Based on the selected answer type retrieves the fields
@@ -31,9 +31,11 @@ const answerFields = ref<Array<IFormField>>(formStructure.getAdditionalQuestionF
  * @param { 'range' | 'unique' | 'multiple' | 'text' } answer_type
  */
 function getAnswerFields(answer_type: 'range' | 'unique' | 'multiple' | 'text' = 'text') {
-  answerFields.value = formStructure.getAdditionalQuestionFields(answer_type)
+  answerFields.value = getAdditionalQuestionFields(answer_type)
   answerType.value = answer_type
 }
+
+const qform = ref<HTMLFormElement>()
 
 /**
  * Iterates through the fields and adds the question to the state
@@ -70,15 +72,27 @@ function addQuestion() {
 
   addQuestionToStudy(q)
 
-  props.formFields.forEach((f) => (f.value = f.key === 'select' ? null : ''))
-  answerFields.value = formStructure.getAdditionalQuestionFields()
+  qform.value!.reset()
+  answerFields.value = getAdditionalQuestionFields()
 }
 
+/**
+ * Saves the questions to the db
+ */
 function saveQuestions() {
   if (!valid.value) return
 
   addQuestion()
   addQuestionsToStudyDB()
+}
+
+/**
+ * Adds another option for unique/multiple
+ */
+function addAnotherField() {
+  answerFields.value.push(
+    ...getAdditionalQuestionFields(answerType.value as 'range' | 'unique' | 'multiple' | 'text')
+  )
 }
 
 onBeforeMount(async () => {
@@ -95,9 +109,10 @@ onBeforeMount(async () => {
     </v-card-item>
     <v-card-text>
       <v-form
+        ref="qform"
         id="question-form"
-        @submit.prevent="addQuestion"
-        validate-on="input"
+        @submit.prevent="saveQuestions"
+        validate-on="lazy submit"
         v-model:model-value="valid"
       >
         <section v-for="(field, idx) in formFields" :key="idx">
@@ -135,6 +150,14 @@ onBeforeMount(async () => {
             variant="solo-filled"
             color="primary"
           />
+          <v-btn
+            v-show="answerType === 'unique' || answerType === 'multiple'"
+            color="secondary-container"
+            @click="addAnotherField"
+            icon
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
           <!-- TODO: add button for multiple options -->
         </section>
       </v-form>
@@ -142,20 +165,20 @@ onBeforeMount(async () => {
     <v-card-actions class="justify-end">
       <v-btn
         form="question-form"
-        type="submit"
+        type="button"
         append-icon="mdi-help-box-multiple-outline"
         class="px-4"
         color="secondary"
+        @click="addQuestion"
       >
         Alta intrebare
       </v-btn>
       <v-btn
         form="question-form"
-        type="button"
+        type="submit"
         append-icon="mdi-check"
         class="px-4"
         color="primary"
-        @click="saveQuestions"
       >
         Salveaza
       </v-btn>

@@ -39,7 +39,7 @@ function submitForm() {
       <v-form
         id="study-form"
         @submit.prevent="submitForm"
-        validate-on="input"
+        validate-on="lazy submit"
         v-model:model-value="valid"
       >
         <section v-for="field in formFields" :key="field.label">

@@ -9,11 +9,20 @@ const props = defineProps<{
   formFields: Array<IFormField>
 }>()
 const { formTitle, formFields } = toRefs(props)
-defineEmits(['submitUser'])
+const userform = ref<HTMLFormElement>()
+
+const emit = defineEmits(['submitUser'])
+
 const titleIcon = computed(() =>
   formTitle.value === 'Creare cont' ? 'mdi-account-plus-outline' : 'mdi-account-edit'
 )
+
 const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregistrare' : 'Salvare'))
+
+function submitForm() {
+  userform.value!.reset()
+  emit('submitUser', valid.value)
+}
 </script>
 
 <template>
@@ -23,9 +32,10 @@ const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregist
     </v-card-item>
     <v-card-text>
       <v-form
+        ref="userform"
         id="register-form"
-        @submit.prevent="$emit('submitUser', valid)"
-        validate-on="input"
+        @submit.prevent="submitForm"
+        validate-on="lazy submit"
         v-model:model-value="valid"
       >
         <section v-for="field in formFields" :key="field.label">
