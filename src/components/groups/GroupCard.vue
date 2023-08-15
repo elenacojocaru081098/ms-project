@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { CONSTANTS } from '@/constants'
+import type { IGroup } from '@/interfaces/group'
 import type { IUser } from '@/interfaces/user'
 import { storeToRefs } from 'pinia'
 
-defineProps<{
-  groupId: string
+const props = defineProps<{
+  group: IGroup
 }>()
 
 const groupsStore = useGroupsStore()
-const { currentGroup } = storeToRefs(groupsStore)
 const { deleteGroupById, updateGroupCoordinators } = groupsStore
 
 /**
@@ -31,7 +31,7 @@ function promptAction(act: string) {
   switch (act) {
     case CONSTANTS.PROMPT_DELETE:
       triggerDialog(
-        `Vreti sa stergeti grupul ${currentGroup.value.name}?`,
+        `Vreti sa stergeti grupul ${props.group.name}?`,
         [hideDialog, deleteGroup],
         [
           {
@@ -41,7 +41,7 @@ function promptAction(act: string) {
           {
             text: 'Da',
             color: 'secondary',
-            actionParams: [currentGroup.value.id]
+            actionParams: [props.group.id]
           }
         ]
       )
@@ -55,11 +55,11 @@ function promptAction(act: string) {
  * Redirects to edit group page
  */
 function goToEdit() {
-  router.push({ path: `/groups/${currentGroup.value.id}` })
+  router.push({ path: `/groups/${props.group.id}` })
 }
 
 const showCoordsList = ref<boolean>(false)
-const groupCoords = ref<Array<string>>(currentGroup.value.coords)
+const groupCoords = ref<Array<string>>(props.group.coords)
 
 /**
  * Loads current coordinators
@@ -67,20 +67,16 @@ const groupCoords = ref<Array<string>>(currentGroup.value.coords)
 async function loadCoordinators() {
   showCoordsList.value = !showCoordsList.value
   groupCoords.value.length = 0
-  groupCoords.value!.push(...currentGroup.value.coords)
+  groupCoords.value!.push(...props.group.coords)
 }
 
 /**
  * Updates the coordinators' list
- *
- * @param { IGroup } group
  */
 function updateCoordsList() {
   if (groupCoords.value.length < 1) return
 
-  currentGroup.value.coords.length = 0
-  currentGroup.value.coords.push(...groupCoords.value)
-  updateGroupCoordinators(currentGroup.value.id, currentGroup.value.coords)
+  updateGroupCoordinators(props.group.id, props.group.coords)
 }
 
 const coords = ref<Array<IUser>>([])
@@ -100,7 +96,7 @@ const { user } = storeToRefs(useUserStore())
   <v-card class="my-2">
     <v-card-item prepend-icon="mdi-account-group">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
-        <span>{{ currentGroup.name }}</span>
+        <span>{{ group.name }}</span>
         <section class="group-controls" v-if="hasCoordinatorRights(user)">
           <v-btn
             density="comfortable"
@@ -151,7 +147,7 @@ const { user } = storeToRefs(useUserStore())
         />
       </v-card-text>
       <v-card-text v-if="isParticipant(user)" class="pa-2">
-        <GroupCardStudies />
+        <GroupCardStudies :studiesIds="group.studies" />
       </v-card-text>
     </v-card-item>
   </v-card>

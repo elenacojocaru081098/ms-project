@@ -1,17 +1,23 @@
 <script setup lang="ts">
-const { studies } = useStudiesStore()
+import { storeToRefs } from 'pinia'
+
+const props = defineProps<{
+  studiesIds?: Array<string>
+}>()
+
+const studiesStore = useStudiesStore()
+const { studies } = storeToRefs(studiesStore)
+const groupStudies = computed(() => studies.value.filter((s) => props.studiesIds?.includes(s.id)))
 
 function goToStudy(sid: string) {
   router.push({ path: `/studies/${sid}/answer` })
 }
-
-onBeforeMount(() => useFetchOnNavigation().fetchStudiesResources())
 </script>
 
 <template>
   <section
     class="d-flex align-center justify-space-between"
-    v-for="study in studies"
+    v-for="study in groupStudies"
     :key="study.id"
   >
     <p class="text-body-1">{{ study.title }}</p>

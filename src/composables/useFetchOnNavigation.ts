@@ -5,6 +5,7 @@ export function useFetchOnNavigation() {
     const studiesStore = useStudiesStore()
     const { getAllStudies, setStudyAsCurrentStudy, fetchCurrentStudyQuestions } = studiesStore
 
+    await useGroupsStore().getAllGroups()
     await getAllStudies()
 
     if (studyId) {
@@ -18,6 +19,7 @@ export function useFetchOnNavigation() {
     const { getAllGroups, setGroupAsCurrentGroup } = groupsStore
 
     await getAllGroups()
+    await useStudiesStore().getAllStudies()
 
     if (groupId) {
       setGroupAsCurrentGroup(groupId)

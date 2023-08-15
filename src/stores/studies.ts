@@ -54,7 +54,10 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     const groups = await getAllGroups()
     const studiesIds: Array<string> = []
 
-    groups.forEach((g) => studiesIds.push(...g.studies))
+    groups.forEach((g) => {
+      if (g.studies) studiesIds.push(...g.studies)
+    })
+
     await getStudiesByIdList(studiesIds)
     studiesInitialized.value = !!studies.value
   }
@@ -65,7 +68,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    * @param { Array<string> } sids List of study ids
    */
   async function getStudiesByIdList(sids: Array<string>) {
-    if (!sids.length) return []
+    if (!sids || !sids.length) return []
 
     const q = query(collection(db, COLLECTIONS.STUDIES), where(documentId(), 'in', sids))
     const qss = await getDocs(q)
@@ -263,6 +266,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     setStudyAsCurrentStudy,
     getAllStudies,
     fetchCurrentUserStudies,
+    getStudiesByIdList,
     createStudy,
     updateStudy,
     studyQuestions,

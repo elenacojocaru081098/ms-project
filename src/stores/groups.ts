@@ -201,6 +201,13 @@ export const useGroupsStore = defineStore(PINIA_STORE_KEYS.GROUPS, () => {
       const group = doc(db, COLLECTIONS.GROUPS, gid)
       await updateDoc(group, { ...g })
 
+      const targetGroup = groups.value.find((g) => g.id === gid)
+
+      if (targetGroup) {
+        targetGroup.coords.length = 0
+        targetGroup.coords.push(...cids)
+      }
+
       return true
     } catch (e: any) {
       console.error(e.message)
