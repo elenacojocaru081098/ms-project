@@ -9,7 +9,8 @@ const { currentStudy, studyQuestions } = storeToRefs(studiesStore)
  */
 function goToQuestions() {
   const s = currentStudy.value
-  router.push({ path: `/studies/${s.id}/answer/${s.questions[0].id}` })
+  if (!s.questions || s.questions.length === 0) return
+  router.push({ path: `/studies/${s.id}/answer/questions` })
 }
 </script>
 
@@ -40,5 +41,12 @@ function goToQuestions() {
     </v-card-text>
   </v-card>
 
-  <v-btn density="default" color="primary" class="float-right" @click="goToQuestions">Start</v-btn>
+  <v-btn
+    density="default"
+    color="primary"
+    class="float-right"
+    @click="goToQuestions"
+    :disabled="!studyQuestions || studyQuestions.length === 0"
+    >Start</v-btn
+  >
 </template>

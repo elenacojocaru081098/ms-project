@@ -1,23 +1,20 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
+import type { IStudy } from '@/interfaces/study'
 
 const props = defineProps<{
-  studyId: string
+  study: IStudy
 }>()
 
-const studiesStore = useStudiesStore()
-const { currentStudy } = storeToRefs(studiesStore)
-
 function goToAddQuestion() {
-  router.push({ path: `/studies/${props.studyId}/questions/add` })
+  router.push({ path: `/studies/${props.study.id}/questions/add` })
 }
 
 function goToEdit() {
-  router.push({ path: `/studies/${props.studyId}` })
+  router.push({ path: `/studies/${props.study.id}` })
 }
 
 function startStudy() {
-  router.push({ path: `/studies/${props.studyId}/answer` })
+  router.push({ path: `/studies/${props.study.id}/answer` })
 }
 
 const { user } = useUserStore()
@@ -25,13 +22,13 @@ const { hasCoordinatorRights } = useUserPermission()
 </script>
 
 <template>
-  <v-card>
+  <v-card class="my-2">
     <v-card-item prepend-icon="mdi-format-list-bulleted-type">
       <v-card-title tag="section">
-        {{ currentStudy.title }}
+        {{ study.title }}
       </v-card-title>
       <v-card-subtitle class="text-subtitle-2">
-        {{ currentStudy.details }}
+        {{ study.details }}
       </v-card-subtitle>
     </v-card-item>
     <v-divider />

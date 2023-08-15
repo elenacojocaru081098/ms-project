@@ -8,6 +8,6 @@ defineProps<{
 
 <template>
   <article>
-    <StudyCard v-for="study in studies" :key="study.id" :study-id="study.id" />
+    <StudyCard v-for="study in studies" :key="study.id" :study="study" />
   </article>
 </template>
