@@ -64,10 +64,8 @@ const groupCoords = ref<Array<string>>(props.group.coords)
 /**
  * Loads current coordinators
  */
-async function loadCoordinators() {
+async function showCoordinators() {
   showCoordsList.value = !showCoordsList.value
-  groupCoords.value.length = 0
-  groupCoords.value!.push(...props.group.coords)
 }
 
 /**
@@ -76,7 +74,7 @@ async function loadCoordinators() {
 function updateCoordsList() {
   if (groupCoords.value.length < 1) return
 
-  updateGroupCoordinators(props.group.id, props.group.coords)
+  updateGroupCoordinators(props.group.id, groupCoords.value)
 }
 
 const coords = ref<Array<IUser>>([])
@@ -103,7 +101,7 @@ const { user } = storeToRefs(useUserStore())
             size="small"
             color="tertiary"
             class="mr-2"
-            @click="loadCoordinators"
+            @click="showCoordinators"
             icon
           >
             <v-icon>mdi-transit-transfer</v-icon>
