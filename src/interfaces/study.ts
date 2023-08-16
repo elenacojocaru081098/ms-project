@@ -9,6 +9,7 @@ export interface IAnswerOptions {
 }
 
 export interface IAnswer {
+  id?: string
   question: string // id
   answer: string | number | Array<string>
 }

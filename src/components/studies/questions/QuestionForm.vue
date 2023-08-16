@@ -144,7 +144,6 @@ function addAnotherField() {
           >
             <v-icon>mdi-plus</v-icon>
           </v-btn>
-          <!-- TODO: add button for multiple options -->
         </section>
       </v-form>
     </v-card-text>
