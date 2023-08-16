@@ -8,6 +8,11 @@ export interface IAnswerOptions {
   options: Array<string>
 }
 
+export interface IAnswer {
+  question: string // id
+  answer: string | number | Array<string>
+}
+
 export interface IStudyQuestion {
   id?: string
   text: string

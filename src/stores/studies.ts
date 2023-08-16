@@ -1,5 +1,5 @@
 import type { IBusToast } from '@/interfaces/bus_events'
-import type { IStudy, IStudyQuestion } from '@/interfaces/study'
+import type { IAnswer, IStudy, IStudyQuestion } from '@/interfaces/study'
 import {
   addDoc,
   collection,
@@ -259,6 +259,59 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     }
   }
 
+  const answers = ref<Array<IAnswer>>([])
+
+  /**
+   * Adds or replaces an answer in the local state
+   *
+   * @param { IAnswer } a
+   */
+  function addAnswer(a: IAnswer) {
+    const existingAnswerIndex = answers.value.findIndex((ans) => ans.question === a.question)
+
+    if (existingAnswerIndex === -1) answers.value?.push(a)
+    else answers.value.splice(existingAnswerIndex, 1, a)
+  }
+
+  /**
+   * Saves the answers to the db
+   */
+  async function addAnswersToDB() {
+    const { user } = useUserStore()
+    const dbAnswers = answers.value.map((ans) => ({ user: user?.id, answer: ans.answer }))
+
+    try {
+      const batch = writeBatch(db)
+
+      dbAnswers.forEach((ans, idx) => {
+        const qRef = doc(
+          collection(db, COLLECTIONS.STUDIES, currentStudy.value.id, COLLECTIONS.QUESTIONS),
+          answers.value[idx].question
+        )
+
+        const aRef = doc(collection(qRef, COLLECTIONS.ANSWERS))
+        batch.set(aRef, {
+          ...ans,
+          ...addTimestamps()
+        })
+      })
+
+      await batch.commit()
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.STUDY_ANSWERS_SAVE_SUCCEEDED,
+        color: CUSTOM_LIGHT_COLORS['secondary-container']
+      })
+    } catch (e: any) {
+      console.error(e.message)
+
+      busToast.emit({
+        text: NOTIFICATION_MESSAGES.STUDY_ANSWERS_SAVE_FAILED,
+        color: CUSTOM_LIGHT_COLORS['error-container']
+      })
+    }
+  }
+
   return {
     studies,
     studiesInitialized,
@@ -277,6 +330,8 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     addQuestionToStudy,
     addQuestionsToStudyDB,
     deleteQuestionFromStudy,
-    fetchCurrentStudyQuestions
+    fetchCurrentStudyQuestions,
+    addAnswer,
+    addAnswersToDB
   }
 })

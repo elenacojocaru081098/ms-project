@@ -25,7 +25,7 @@ const { hasCoordinatorRights } = useUserPermission()
     </template>
   </v-app-bar>
 
-  <v-navigation-drawer v-model="openNav" temporary>
+  <v-navigation-drawer touchless v-model="openNav" temporary>
     <v-list-item
       prepend-icon="mdi-cog"
       :title="(userInfo as string)"

@@ -16,6 +16,7 @@ const USER_STATUS = {
 }
 
 const COLLECTIONS = {
+  ANSWERS: 'answers',
   GROUPS: 'groups',
   QUESTIONS: 'questions',
   STUDIES: 'studies',
@@ -51,7 +52,9 @@ const NOTIFICATION_MESSAGES = {
   STUDY_QUESTION_ADD_SUCCEEDED: 'Intrebarea a fost adaugata cu succes',
   STUDY_QUESTION_ADD_FAILED: 'Intrebarea nu a putut fi adaugata',
   STUDY_QUESTION_DELETE_SUCCEEDED: 'Intrebarea a fost stearsa cu succes',
-  STUDY_QUESTION_DELETE_FAILED: 'Intrebarea nu a putut fi stearsa'
+  STUDY_QUESTION_DELETE_FAILED: 'Intrebarea nu a putut fi stearsa',
+  STUDY_ANSWERS_SAVE_SUCCEEDED: 'Raspunsurile au fost salvate',
+  STUDY_ANSWERS_SAVE_FAILED: 'Raspunsurile nu au putut fi salvate'
 }
 
 // keys for all the stores
