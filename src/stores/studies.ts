@@ -15,7 +15,7 @@ import { defineStore } from 'pinia'
 
 export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
-  const { addTimestamps } = useDbInfo()
+  const { addTimestamps, addModifiedTags } = useDbInfo()
 
   const groupsStore = useGroupsStore()
   const { getAllGroups, updateGroupStudies } = groupsStore
@@ -137,6 +137,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    */
   function setCurrentQuestionIndex(idx: number) {
     currentQuestionIndex.value = idx
+    console.log(idx, currentQuestionIndex.value)
   }
 
   /**
@@ -260,6 +261,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   }
 
   const answers = ref<Array<IAnswer>>([])
+  const answersFetched = ref<boolean>(false)
 
   /**
    * Adds or replaces an answer in the local state
@@ -270,7 +272,10 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     const existingAnswerIndex = answers.value.findIndex((ans) => ans.question === a.question)
 
     if (existingAnswerIndex === -1) answers.value?.push(a)
-    else answers.value.splice(existingAnswerIndex, 1, a)
+    else {
+      a.id = answers.value[existingAnswerIndex].id
+      answers.value.splice(existingAnswerIndex, 1, a)
+    }
   }
 
   /**
@@ -278,7 +283,11 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    */
   async function addAnswersToDB() {
     const { user } = useUserStore()
-    const dbAnswers = answers.value.map((ans) => ({ user: user?.id, answer: ans.answer }))
+    const dbAnswers = answers.value.map((ans) => ({
+      id: ans.id,
+      user: user?.id,
+      answer: ans.answer
+    }))
 
     try {
       const batch = writeBatch(db)
@@ -289,14 +298,26 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
           answers.value[idx].question
         )
 
-        const aRef = doc(collection(qRef, COLLECTIONS.ANSWERS))
-        batch.set(aRef, {
-          ...ans,
-          ...addTimestamps()
-        })
+        if (!ans.id) {
+          const aRef = doc(collection(qRef, COLLECTIONS.ANSWERS))
+          ans.id = aRef.id
+          batch.set(aRef, {
+            user: ans.user,
+            answer: ans.answer,
+            ...addTimestamps()
+          })
+        } else {
+          const aRef = doc(collection(qRef, COLLECTIONS.ANSWERS), ans.id)
+          batch.update(aRef, {
+            user: ans.user,
+            answer: ans.answer,
+            ...addModifiedTags()
+          })
+        }
       })
 
       await batch.commit()
+      answersFetched.value = true
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.STUDY_ANSWERS_SAVE_SUCCEEDED,
@@ -312,8 +333,48 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     }
   }
 
-  // TODO: fetch answers per questions
-  // TODO: update existing answer
+  /**
+   * Fetches the answers for the current study
+   */
+  async function fetchQuestionsAnswers() {
+    if (!currentStudy.value) return
+    if (answers.value.length > 0) return answers.value
+    const ans: Array<IAnswer> = []
+    const { user } = useUserStore()
+
+    try {
+      for (const question of studyQuestions.value) {
+        const q = query(
+          collection(
+            db,
+            COLLECTIONS.STUDIES,
+            currentStudy.value.id,
+            COLLECTIONS.QUESTIONS,
+            question.id!,
+            COLLECTIONS.ANSWERS
+          ),
+          where('user', '==', user!.id)
+        )
+
+        const qss = await getDocs(q)
+
+        qss.forEach((d) => {
+          const data = d.data()
+
+          ans.push({
+            id: d.id,
+            question: question.id!,
+            answer: data.answer
+          })
+        })
+      }
+
+      ans.sort((a, b) => parseInt(a.question as string) - parseInt(b.question as string))
+      answers.value.push(...ans)
+    } catch (e: any) {
+      console.error(e.message)
+    }
+  }
 
   return {
     studies,
@@ -334,7 +395,10 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
     addQuestionsToStudyDB,
     deleteQuestionFromStudy,
     fetchCurrentStudyQuestions,
+    answers,
+    answersFetched,
     addAnswer,
-    addAnswersToDB
+    addAnswersToDB,
+    fetchQuestionsAnswers
   }
 })

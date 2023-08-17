@@ -3,7 +3,12 @@ import type { RouteLocationNormalized } from 'vue-router'
 export function useFetchOnNavigation() {
   async function fetchStudiesResources(studyId: string | null = null) {
     const studiesStore = useStudiesStore()
-    const { getAllStudies, setStudyAsCurrentStudy, fetchCurrentStudyQuestions } = studiesStore
+    const {
+      getAllStudies,
+      setStudyAsCurrentStudy,
+      fetchCurrentStudyQuestions,
+      fetchQuestionsAnswers
+    } = studiesStore
 
     await useGroupsStore().getAllGroups()
     await getAllStudies()
@@ -11,6 +16,7 @@ export function useFetchOnNavigation() {
     if (studyId) {
       setStudyAsCurrentStudy(studyId)
       await fetchCurrentStudyQuestions()
+      await fetchQuestionsAnswers()
     }
   }
 

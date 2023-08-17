@@ -4,9 +4,6 @@ import { storeToRefs } from 'pinia'
 const studiesStore = useStudiesStore()
 const { currentStudy, studyQuestions } = storeToRefs(studiesStore)
 
-// TODO: check if started
-// TODO: if started go to first unanswered question
-
 /**
  * Takes the user to the answer flow
  */
