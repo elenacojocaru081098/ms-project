@@ -305,13 +305,22 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
             answer: ans.answer,
             ...addTimestamps()
           })
-        } else {
+        } else if (
+          ans.id &&
+          (ans.answer !== undefined || (ans.answer as string | string[]).length)
+        ) {
           const aRef = doc(collection(qRef, COLLECTIONS.ANSWERS), ans.id)
           batch.update(aRef, {
             user: ans.user,
             answer: ans.answer,
             ...addModifiedTags()
           })
+        } else if (
+          ans.id &&
+          (ans.answer === undefined || (ans.answer as string | string[]).length === 0)
+        ) {
+          const aRef = doc(collection(qRef, COLLECTIONS.ANSWERS), ans.id)
+          batch.delete(aRef)
         }
       })
 

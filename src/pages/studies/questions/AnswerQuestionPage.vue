@@ -54,7 +54,7 @@ function saveLocalAnswer() {
  * Goes to previous question
  */
 function prevQuestion() {
-  if (answer.value || multipleAnswer.value.length > 0) saveLocalAnswer()
+  if (answer.value || multipleAnswer.value.length > 0 || currentAnswerId.value) saveLocalAnswer()
 
   let newIdx = currentQuestionIndex.value - 1
 
@@ -74,7 +74,7 @@ function prevQuestion() {
  * Goes to next question
  */
 function nextQuestion() {
-  if (answer.value || multipleAnswer.value.length > 0) saveLocalAnswer()
+  if (answer.value || multipleAnswer.value.length > 0 || currentAnswerId.value) saveLocalAnswer()
 
   let newIdx = currentQuestionIndex.value + 1
 
@@ -107,7 +107,7 @@ function checkRangeValue() {
  * Saves answers to db
  */
 function saveAnswers() {
-  if (answer.value || multipleAnswer.value.length > 0) saveLocalAnswer()
+  if (answer.value || multipleAnswer.value.length > 0 || currentAnswerId.value) saveLocalAnswer()
   addAnswersToDB()
 
   router.push({ path: '/dashboard' })
@@ -135,7 +135,6 @@ onBeforeMount(() => render.value && initialize())
 
 <template>
   <article v-if="render">
-    {{ currentQuestionIndex }}
     <section class="d-flex align-center justify-space-between">
       <v-btn density="default" color="secondary-container" @click="prevQuestion">Precedenta</v-btn>
       <v-btn density="default" color="secondary-container" @click="nextQuestion">Urmatoarea</v-btn>
