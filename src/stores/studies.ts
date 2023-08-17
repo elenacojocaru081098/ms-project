@@ -137,7 +137,6 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    */
   function setCurrentQuestionIndex(idx: number) {
     currentQuestionIndex.value = idx
-    console.log(idx, currentQuestionIndex.value)
   }
 
   /**

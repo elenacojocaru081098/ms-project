@@ -114,7 +114,6 @@ function saveAnswers() {
 }
 
 function initialize() {
-  console.log('init')
   if (answers.value.length > 0 && answers.value.length !== currentStudy.value?.questions.length) {
     const qIdx = currentStudy.value.questions.findIndex(
       (q) => answers.value.findIndex((a) => q.id === a.question) === -1
