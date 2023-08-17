@@ -11,7 +11,7 @@ import {
   where,
   writeBatch
 } from 'firebase/firestore'
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 
 export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
   const busToast = useEventBus<IBusToast>(BUS_EVENTS.NOTIFICATION)
@@ -282,10 +282,13 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    */
   async function addAnswersToDB() {
     const { user } = useUserStore()
+    const { currentPatient } = storeToRefs(usePatientStore())
+
     const dbAnswers = answers.value.map((ans) => ({
       id: ans.id,
       user: user?.id,
-      answer: ans.answer
+      answer: ans.answer,
+      patient: currentPatient.value!.id
     }))
 
     try {
@@ -325,7 +328,6 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
       })
 
       await batch.commit()
-      answersFetched.value = true
 
       busToast.emit({
         text: NOTIFICATION_MESSAGES.STUDY_ANSWERS_SAVE_SUCCEEDED,
@@ -379,6 +381,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
 
       ans.sort((a, b) => parseInt(a.question as string) - parseInt(b.question as string))
       answers.value.push(...ans)
+      answersFetched.value = true
     } catch (e: any) {
       console.error(e.message)
     }

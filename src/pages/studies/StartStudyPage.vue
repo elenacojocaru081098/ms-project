@@ -3,14 +3,22 @@ import { storeToRefs } from 'pinia'
 
 const studiesStore = useStudiesStore()
 const { currentStudy, studyQuestions } = storeToRefs(studiesStore)
+const patientStore = usePatientStore()
+const { checkIfPatientExists } = patientStore
 
-/**
- * Takes the user to the answer flow
- */
-function goToQuestions() {
-  const s = currentStudy.value
-  if (!s.questions || s.questions.length === 0) return
-  router.push({ path: `/studies/${s.id}/answer/questions` })
+// patient's pnc
+const pnc = ref<string>()
+const validation = useValidationRules()
+const validationRules = validation.getPNCRules()
+const valid = ref<boolean | null>(null)
+
+async function submitForm() {
+  if (!valid.value) return
+
+  const patientExists = await checkIfPatientExists(pnc.value!)
+
+  if (patientExists === false) return router.push({ path: '/patients/add' })
+  else if (patientExists === true) return router.push({ path: `/patients/${pnc.value}` })
 }
 </script>
 
@@ -41,12 +49,30 @@ function goToQuestions() {
     </v-card-text>
   </v-card>
 
-  <v-btn
-    density="default"
-    color="primary"
-    class="float-right"
-    @click="goToQuestions"
-    :disabled="!studyQuestions || studyQuestions.length === 0"
-    >Start</v-btn
+  <v-form
+    id="pnc-form"
+    @submit.prevent="submitForm"
+    validate-on="lazy submit"
+    v-model:model-value="valid"
   >
+    <v-text-field
+      label="CNP pacientului"
+      type="text"
+      :rules="validation.getValidationRules(validationRules, 'pnc')"
+      v-model="pnc"
+      variant="solo-filled"
+      color="primary"
+    />
+    <v-btn
+      form="pnc-form"
+      type="submit"
+      density="default"
+      size="large"
+      color="primary"
+      class="float-right"
+      :disabled="!studyQuestions || studyQuestions.length === 0"
+    >
+      Start
+    </v-btn>
+  </v-form>
 </template>

@@ -18,6 +18,7 @@ const router = createRouter({
         ...usersRoutes,
         ...groupsRoutes,
         ...studiesRoutes,
+        ...patientsRoutes,
         {
           path: 'dashboard',
           component: () => import('~/pages/HomePage.vue')

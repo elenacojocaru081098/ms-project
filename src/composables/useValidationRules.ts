@@ -7,23 +7,36 @@ export function useValidationRules() {
     return err
   }
 
+  function pncValidation(value: any) {
+    if (value?.length !== 13) return 'CNP trebuie sa aiba 13 caractere'
+
+    const control = '279146358279'.split('')
+    const checkSum: number = value.split('').reduce((acc: number, val: string, idx: number) => {
+      if (idx === value.length - 1) return acc
+
+      acc += parseInt(val) * parseInt(control[idx])
+      return acc
+    }, 0)
+
+    const remainder = checkSum % 11
+    const lastDigit = parseInt(value.charAt(value.length - 1))
+    const validate: boolean = remainder < 10 ? lastDigit === remainder : lastDigit === 1
+
+    return validate ? true : 'CNP invalid'
+  }
+
+  function minimumLength(value: string, minLength: number) {
+    if (value.length >= minLength) return true
+    return `Campul trebuie sa aiba minim ${minLength} caractere`
+  }
+
   /**
    * Register form validation rules
    */
   function getRegisterRules() {
     return {
-      fname: [
-        (value: string) => {
-          if (value?.length > 1) return true
-          return 'Prenumele trebuie sa aiba minim 2 caractere'
-        }
-      ],
-      lname: [
-        (value: string) => {
-          if (value?.length > 2) return true
-          return 'Numele trebuie sa aiba minim 3 caractere'
-        }
-      ],
+      fname: [(value: string) => minimumLength(value, 2)],
+      lname: [(value: string) => minimumLength(value, 3)],
       email: [
         (value: string) => {
           const pattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/
@@ -32,25 +45,7 @@ export function useValidationRules() {
           return 'Adresa de email incorecta'
         }
       ],
-      pnc: [
-        (value: string) => {
-          if (value?.length !== 13) return 'CNP trebuie sa aiba 13 caractere'
-
-          const control = '279146358279'.split('')
-          const checkSum: number = value.split('').reduce((acc, val, idx) => {
-            if (idx === value.length - 1) return acc
-
-            acc += parseInt(val) * parseInt(control[idx])
-            return acc
-          }, 0)
-
-          const remainder = checkSum % 11
-          const lastDigit = parseInt(value.charAt(value.length - 1))
-          const validate: boolean = remainder < 10 ? lastDigit === remainder : lastDigit === 1
-
-          return validate ? true : 'CNP invalid'
-        }
-      ],
+      pnc: [(value: string) => pncValidation(value)],
       role: [(value: string) => requiredField(value, 'Rolul este camp obligatoriu')]
     }
   }
@@ -85,6 +80,26 @@ export function useValidationRules() {
   }
 
   /**
+   * Patient PNC form validation rules
+   */
+  function getPNCRules() {
+    return {
+      pnc: [(value: string) => pncValidation(value)]
+    }
+  }
+
+  /**
+   * Patient form validation rules
+   */
+  function getPatientRules() {
+    return {
+      fname: [(value: string) => minimumLength(value, 2)],
+      lname: [(value: string) => minimumLength(value, 3)],
+      pnc: [(value: string) => pncValidation(value)]
+    }
+  }
+
+  /**
    * Field validation rules
    */
   function getValidationRules(rulesSet: any, key: string | undefined) {
@@ -95,7 +110,9 @@ export function useValidationRules() {
     getRegisterRules,
     getLoginRules,
     getForgotRules,
-    getValidationRules,
-    getAddQuestionRules
+    getAddQuestionRules,
+    getPNCRules,
+    getPatientRules,
+    getValidationRules
   }
 }

@@ -40,8 +40,6 @@ export function useFetchOnNavigation() {
   }
 
   return {
-    fetchResources,
-    fetchGroupsResources,
-    fetchStudiesResources
+    fetchResources
   }
 }

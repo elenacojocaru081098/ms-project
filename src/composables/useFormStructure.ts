@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia'
 import type { IFormField } from '~/interfaces/form'
 
 /**
@@ -291,6 +292,43 @@ export function useFormStructure() {
     }
   }
 
+  async function getPatientForm(pnc: string | null = null) {
+    const patientStore = usePatientStore()
+    const { currentPatient, pncToCheck } = storeToRefs(patientStore)
+    const { checkIfPatientExists } = patientStore
+    if (!currentPatient.value) await checkIfPatientExists(pnc)
+
+    return [
+      {
+        label: 'Prenume',
+        type: 'text',
+        key: 'fname',
+        rulesKey: 'fname',
+        value: currentPatient.value ? currentPatient.value.fname : ''
+      },
+      {
+        label: 'Nume',
+        type: 'text',
+        key: 'lname',
+        rulesKey: 'lname',
+        value: currentPatient.value ? currentPatient.value.lname : ''
+      },
+      {
+        label: 'CNP',
+        type: 'text',
+        key: 'pnc',
+        rulesKey: 'pnc',
+        value: currentPatient.value ? currentPatient.value.pnc : (pncToCheck.value as string)
+      },
+      {
+        label: 'Afectiune',
+        type: 'text',
+        key: 'illness',
+        value: currentPatient.value ? currentPatient.value.illness : ''
+      }
+    ]
+  }
+
   return {
     getRegisterForm,
     getLoginForm,
@@ -299,6 +337,7 @@ export function useFormStructure() {
     getCreateGroupForm,
     getCreateStudyForm,
     getAddQuestionForm,
-    getAdditionalQuestionFields
+    getAdditionalQuestionFields,
+    getPatientForm
   }
 }

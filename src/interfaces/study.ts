@@ -34,3 +34,13 @@ export interface IUserAnswer {
   answer_type: 'range' | 'unique' | 'multiple' | 'text'
   answer: Array<any>
 }
+
+export interface IPatient {
+  id?: string
+  fname: string
+  lname: string
+  pnc: string
+  illness: string
+  gender: string
+  birthdate: string
+}

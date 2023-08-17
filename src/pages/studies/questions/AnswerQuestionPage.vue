@@ -128,9 +128,9 @@ function initialize() {
 
 // render component after we've set the starting question
 const render = ref<boolean>(answersFetched.value)
-watchOnce(answers.value, () => !answersFetched.value && initialize())
+watchOnce(answersFetched, initialize)
 
-onBeforeMount(() => render.value && initialize())
+onBeforeMount(() => answersFetched.value && initialize())
 </script>
 
 <template>

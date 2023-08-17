@@ -18,6 +18,7 @@ const USER_STATUS = {
 const COLLECTIONS = {
   ANSWERS: 'answers',
   GROUPS: 'groups',
+  PATIENTS: 'patients',
   QUESTIONS: 'questions',
   STUDIES: 'studies',
   USERS: 'users'
@@ -54,7 +55,9 @@ const NOTIFICATION_MESSAGES = {
   STUDY_QUESTION_DELETE_SUCCEEDED: 'Intrebarea a fost stearsa cu succes',
   STUDY_QUESTION_DELETE_FAILED: 'Intrebarea nu a putut fi stearsa',
   STUDY_ANSWERS_SAVE_SUCCEEDED: 'Raspunsurile au fost salvate',
-  STUDY_ANSWERS_SAVE_FAILED: 'Raspunsurile nu au putut fi salvate'
+  STUDY_ANSWERS_SAVE_FAILED: 'Raspunsurile nu au putut fi salvate',
+  PATIENT_CREATED_SUCCEEDED: 'Pacient adaugat cu succes',
+  PATIENT_CREATED_FAILED: 'Pacientul nu a putut fi adaugat'
 }
 
 // keys for all the stores
@@ -62,6 +65,7 @@ const PINIA_STORE_KEYS = {
   AUTH: 'ms:pinia-store:Auth',
   DIALOG: 'ms:pinia-store:Dialog',
   GROUPS: 'ms:pinia-store:Groups',
+  PATIENT: 'ms:pinia-store:Patient',
   STUDIES: 'ms:pinia-store:Studies',
   USER: 'ms:pinia-store:User',
   USERS: 'ms:pinia-store:Users'
