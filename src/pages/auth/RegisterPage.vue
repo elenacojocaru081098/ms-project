@@ -40,6 +40,6 @@ async function submitRegisterForm(valid: boolean) {
 </script>
 
 <template>
-  <NavigationBar />
+  <NavigationBar :hide-drawer="true" />
   <UserForm form-title="Creare cont" :form-fields="formFields" @submit-user="submitRegisterForm" />
 </template>

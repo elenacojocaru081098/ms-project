@@ -5,11 +5,12 @@ const dialogStore = useDialogStore()
 
 const { msg, btns, show } = storeToRefs(dialogStore)
 const { invokeAction } = dialogStore
+const largeScreen = useScreenSize().hasBigScreen()
 </script>
 
 <template>
   <v-dialog v-model="show">
-    <v-card>
+    <v-card :width="largeScreen ? '40%' : '100%'" class="mx-auto">
       <v-card-text>{{ msg }}</v-card-text>
       <v-card-actions class="justify-center">
         <v-btn

@@ -12,6 +12,7 @@ interface INavCard {
 
 const { user } = storeToRefs(useUserStore())
 const { hasCoordinatorRights, isParticipant } = useUserPermission()
+const largeScreen = useScreenSize().hasBigScreen()
 
 const cards: Array<INavCard> = [
   {
@@ -58,13 +59,31 @@ const cards: Array<INavCard> = [
 </script>
 
 <template>
-  <section v-for="card in cards" :key="card.title">
-    <v-card v-show="card.show" :color="card.color" class="my-4">
-      <v-card-title class="text-h6">{{ card.title }}</v-card-title>
-      <v-card-subtitle class="text-body-1 my-2">{{ card.subtitle }}</v-card-subtitle>
-      <v-card-actions class="justify-end">
-        <v-btn @click="$router.push({ path: card.btnRoute })">{{ card.btnText }}</v-btn>
-      </v-card-actions>
-    </v-card>
-  </section>
+  <article
+    :class="[
+      'layout',
+      {
+        'd-flex flex-wrap': largeScreen
+      }
+    ]"
+  >
+    <section v-for="card in cards" :key="card.title">
+      <v-card
+        v-show="card.show"
+        :color="card.color"
+        :class="[
+          'my-4 navigation-card',
+          {
+            'mx-4': largeScreen
+          }
+        ]"
+      >
+        <v-card-title class="text-h6">{{ card.title }}</v-card-title>
+        <v-card-subtitle class="text-body-1 my-2">{{ card.subtitle }}</v-card-subtitle>
+        <v-card-actions class="justify-end">
+          <v-btn @click="$router.push({ path: card.btnRoute })">{{ card.btnText }}</v-btn>
+        </v-card-actions>
+      </v-card>
+    </section>
+  </article>
 </template>

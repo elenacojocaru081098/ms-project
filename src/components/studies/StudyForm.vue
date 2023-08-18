@@ -43,7 +43,7 @@ function goToAddQuestion() {
       <v-form
         id="study-form"
         @submit.prevent="submitForm"
-        validate-on="lazy submit"
+        validate-on="lazy input"
         v-model:model-value="valid"
       >
         <section v-for="field in formFields" :key="field.label">

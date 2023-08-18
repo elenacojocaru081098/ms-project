@@ -138,7 +138,7 @@ onMounted(async () => {
       <v-form
         id="group-form"
         @submit.prevent="submitForm"
-        validate-on="lazy submit"
+        validate-on="lazy input"
         v-model:model-value="valid"
       >
         <section v-for="field in formFields" :key="field.label">
