@@ -1,0 +1,15 @@
+.large-screen {
+  .v-navigation-drawer {
+    .v-list-item-subtitle {
+      white-space: nowrap;
+    }
+  }
+
+  .navigation-card {
+    width: 250px;
+
+    .v-card-subtitle {
+      white-space: break-spaces;
+    }
+  }
+}

@@ -50,7 +50,7 @@ async function submitForm() {
       <v-form
         id="patient-form"
         @submit.prevent="submitForm"
-        validate-on="lazy submit"
+        validate-on="lazy input"
         v-model:model-value="valid"
       >
         <section v-for="field in formFields" :key="field.label">

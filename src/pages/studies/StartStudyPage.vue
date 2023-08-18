@@ -52,7 +52,7 @@ async function submitForm() {
   <v-form
     id="pnc-form"
     @submit.prevent="submitForm"
-    validate-on="lazy submit"
+    validate-on="lazy input"
     v-model:model-value="valid"
   >
     <v-text-field

@@ -28,7 +28,7 @@ function submitLoginForm() {
     <v-form
       id="login-form"
       @submit.prevent="submitLoginForm"
-      validate-on="lazy submit"
+      validate-on="lazy input"
       v-model:model-value="valid"
     >
       <section v-for="field in formFields" :key="field.label">

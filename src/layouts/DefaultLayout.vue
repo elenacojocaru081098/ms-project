@@ -1,7 +1,18 @@
+<script setup lang="ts">
+const largeScreen = useScreenSize().hasBigScreen()
+</script>
+
 <template>
   <NavigationBar />
   <v-main>
-    <section class="main-section pa-4">
+    <section
+      :class="[
+        'main-section pa-4',
+        {
+          'pa-16': largeScreen
+        }
+      ]"
+    >
       <Suspense>
         <template #default>
           <RouterView />
