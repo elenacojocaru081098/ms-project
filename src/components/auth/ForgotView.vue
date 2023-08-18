@@ -27,7 +27,7 @@ function forgotPassword() {
     <v-form
       id="forgot-form"
       @submit.prevent="forgotPassword"
-      validate-on="blur"
+      validate-on="lazy submit"
       v-model:model-value="valid"
     >
       <section v-for="field in formFields" :key="field.label">

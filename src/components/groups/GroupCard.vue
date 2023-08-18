@@ -1,21 +1,23 @@
 <script setup lang="ts">
 import { CONSTANTS } from '@/constants'
+import type { IGroup } from '@/interfaces/group'
 import type { IUser } from '@/interfaces/user'
 import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
-  groupId: string
+  group: IGroup
 }>()
 
 const groupsStore = useGroupsStore()
-const { currentGroup } = storeToRefs(groupsStore)
-const { deleteGroupById, updateGroupCoordinators, setGroupAsCurrentGroup } = groupsStore
+const { deleteGroupById, updateGroupCoordinators } = groupsStore
 
 /**
  * Deletes a group
+ *
+ * @param { string } gid
  */
-function deleteGroup() {
-  deleteGroupById(currentGroup.value.id)
+function deleteGroup(gid: string) {
+  deleteGroupById(gid)
 }
 
 /**
@@ -29,7 +31,7 @@ function promptAction(act: string) {
   switch (act) {
     case CONSTANTS.PROMPT_DELETE:
       triggerDialog(
-        `Vreti sa stergeti grupul ${currentGroup.value.name}?`,
+        `Vreti sa stergeti grupul ${props.group.name}?`,
         [hideDialog, deleteGroup],
         [
           {
@@ -39,7 +41,7 @@ function promptAction(act: string) {
           {
             text: 'Da',
             color: 'secondary',
-            actionParams: [currentGroup.value.id]
+            actionParams: [props.group.id]
           }
         ]
       )
@@ -53,32 +55,26 @@ function promptAction(act: string) {
  * Redirects to edit group page
  */
 function goToEdit() {
-  router.push({ path: `/groups/${currentGroup.value.id}` })
+  router.push({ path: `/groups/${props.group.id}` })
 }
 
 const showCoordsList = ref<boolean>(false)
-const groupCoords = ref<Array<string>>(currentGroup.value.coords)
+const groupCoords = ref<Array<string>>(props.group.coords)
 
 /**
  * Loads current coordinators
  */
-async function loadCoordinators() {
+async function showCoordinators() {
   showCoordsList.value = !showCoordsList.value
-  groupCoords.value.length = 0
-  groupCoords.value!.push(...currentGroup.value.coords)
 }
 
 /**
  * Updates the coordinators' list
- *
- * @param { IGroup } group
  */
 function updateCoordsList() {
   if (groupCoords.value.length < 1) return
 
-  currentGroup.value.coords.length = 0
-  currentGroup.value.coords.push(...groupCoords.value)
-  updateGroupCoordinators(currentGroup.value.id, currentGroup.value.coords)
+  updateGroupCoordinators(props.group.id, groupCoords.value)
 }
 
 const coords = ref<Array<IUser>>([])
@@ -88,10 +84,9 @@ const coords = ref<Array<IUser>>([])
  */
 onBeforeMount(async () => {
   coords.value = await useUsersStore().getCoordinators()
-  setGroupAsCurrentGroup(props.groupId)
 })
 
-const { hasCoordinatorRights } = useUserPermission()
+const { hasCoordinatorRights, isParticipant } = useUserPermission()
 const { user } = storeToRefs(useUserStore())
 </script>
 
@@ -99,14 +94,14 @@ const { user } = storeToRefs(useUserStore())
   <v-card class="my-2">
     <v-card-item prepend-icon="mdi-account-group">
       <v-card-title tag="section" class="d-flex align-center justify-space-between">
-        <span>{{ currentGroup.name }}</span>
+        <span>{{ group.name }}</span>
         <section class="group-controls" v-if="hasCoordinatorRights(user)">
           <v-btn
             density="comfortable"
             size="small"
             color="tertiary"
             class="mr-2"
-            @click="loadCoordinators"
+            @click="showCoordinators"
             icon
           >
             <v-icon>mdi-transit-transfer</v-icon>
@@ -133,11 +128,7 @@ const { user } = storeToRefs(useUserStore())
         </section>
       </v-card-title>
       <v-card-subtitle class="text-subtitle-2">
-        {{
-          `${currentGroup.users.length} ${
-            currentGroup.users.length === 1 ? 'participant' : 'participanti'
-          }`
-        }}
+        <GroupCardInfo />
       </v-card-subtitle>
       <v-card-text v-if="showCoordsList">
         <v-autocomplete
@@ -152,6 +143,9 @@ const { user } = storeToRefs(useUserStore())
           multiple
           @update:model-value="updateCoordsList()"
         />
+      </v-card-text>
+      <v-card-text v-if="isParticipant(user)" class="pa-2">
+        <GroupCardStudies :studiesIds="group.studies" />
       </v-card-text>
     </v-card-item>
   </v-card>

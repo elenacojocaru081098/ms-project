@@ -8,7 +8,7 @@ export const groupsRoutes = [
     }
   },
   {
-    path: '/groups/:id',
+    path: '/groups/:groupId',
     name: 'Edit Group',
     components: {
       default: () => import('~/pages/groups/EditGroupPage.vue')

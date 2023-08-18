@@ -2,8 +2,8 @@
 import { storeToRefs } from 'pinia'
 
 const studiesStore = useStudiesStore()
-const { studiesInitialized, currentStudy } = storeToRefs(studiesStore)
-const { updateStudy: updateDBStudy, fetchCurrentUserStudies, setStudyAsCurrentStudy } = studiesStore
+const { currentStudy } = storeToRefs(studiesStore)
+const { updateStudy: updateDBStudy } = studiesStore
 const formFields = ref(await useFormStructure().getCreateStudyForm())
 const { getGroupsWithStudy } = useGroupsStore()
 
@@ -21,11 +21,6 @@ const computedFormFields = computed(() => {
 function updateStudy() {
   updateDBStudy()
 }
-
-onBeforeMount(async () => {
-  if (!studiesInitialized.value) await fetchCurrentUserStudies()
-  setStudyAsCurrentStudy(router.currentRoute.value.params.id as string)
-})
 </script>
 
 <template>

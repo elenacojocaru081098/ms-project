@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { IGroup } from '@/interfaces/group'
+import { storeToRefs } from 'pinia'
 
 const searchTerm = ref<string>('')
 const groupsStore = useGroupsStore()
@@ -16,6 +17,9 @@ const filteredGroups = computed(() =>
 function goToCreateGroup() {
   router.push({ path: '/groups/create' })
 }
+
+const { user } = storeToRefs(useUserStore())
+const { hasCoordinatorRights } = useUserPermission()
 </script>
 
 <template>
@@ -23,6 +27,7 @@ function goToCreateGroup() {
     <v-text-field prepend-inner-icon="mdi-magnify" label="Cauta grup" v-model="searchTerm" />
     <GroupList :groups="filteredGroups" />
     <v-btn
+      v-if="hasCoordinatorRights(user)"
       class="add-btn"
       density="default"
       color="secondary-container"

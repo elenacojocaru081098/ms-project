@@ -25,7 +25,7 @@ const { hasCoordinatorRights } = useUserPermission()
     </template>
   </v-app-bar>
 
-  <v-navigation-drawer v-model="openNav" temporary>
+  <v-navigation-drawer touchless v-model="openNav" temporary>
     <v-list-item
       prepend-icon="mdi-cog"
       :title="(userInfo as string)"
@@ -59,7 +59,7 @@ const { hasCoordinatorRights } = useUserPermission()
         prepend-icon="mdi-format-list-bulleted-type"
         :title="hasCoordinatorRights(user) ? 'Gestionare studii' : 'Vizualizare studii'"
         :subtitle="hasCoordinatorRights(user) ? 'Creati, editati & stergeti' : undefined"
-        to="/studies"
+        :to="hasCoordinatorRights(user) ? '/studies' : '/studies/all'"
       />
     </v-list>
   </v-navigation-drawer>

@@ -18,6 +18,7 @@ const router = createRouter({
         ...usersRoutes,
         ...groupsRoutes,
         ...studiesRoutes,
+        ...patientsRoutes,
         {
           path: 'dashboard',
           component: () => import('~/pages/HomePage.vue')
@@ -33,6 +34,8 @@ const router = createRouter({
 
 // navigation guards
 router.beforeEach((to: RouteLocationNormalized) => {
+  useFetchOnNavigation().fetchResources(to)
+
   const { user } = storeToRefs(useUserStore())
 
   if (!user.value && to.path !== '/auth/login') return { path: '/auth/login' }

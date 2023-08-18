@@ -15,6 +15,15 @@ const USER_STATUS = {
   DELETED: 'Deleted' as 'Pending' | 'Active' | 'Deleted'
 }
 
+const COLLECTIONS = {
+  ANSWERS: 'answers',
+  GROUPS: 'groups',
+  PATIENTS: 'patients',
+  QUESTIONS: 'questions',
+  STUDIES: 'studies',
+  USERS: 'users'
+}
+
 // toast notification messages
 const NOTIFICATION_MESSAGES = {
   LOGIN_FAILED: 'Date de autentificare incorecte',
@@ -40,7 +49,15 @@ const NOTIFICATION_MESSAGES = {
   GROUP_UPDATED: 'Grup actualizat cu succes',
   GROUP_UPDATED_FAIL: 'Grupul nu s-a putut actualiza',
   STUDY_CREATED_SUCCEEDED: 'Studiul a fost creat cu succes',
-  STUDY_CREATED_FAILED: 'Studiul nu a putut fi creat'
+  STUDY_CREATED_FAILED: 'Studiul nu a putut fi creat',
+  STUDY_QUESTION_ADD_SUCCEEDED: 'Intrebarea a fost adaugata cu succes',
+  STUDY_QUESTION_ADD_FAILED: 'Intrebarea nu a putut fi adaugata',
+  STUDY_QUESTION_DELETE_SUCCEEDED: 'Intrebarea a fost stearsa cu succes',
+  STUDY_QUESTION_DELETE_FAILED: 'Intrebarea nu a putut fi stearsa',
+  STUDY_ANSWERS_SAVE_SUCCEEDED: 'Raspunsurile au fost salvate',
+  STUDY_ANSWERS_SAVE_FAILED: 'Raspunsurile nu au putut fi salvate',
+  PATIENT_CREATED_SUCCEEDED: 'Pacient adaugat cu succes',
+  PATIENT_CREATED_FAILED: 'Pacientul nu a putut fi adaugat'
 }
 
 // keys for all the stores
@@ -48,9 +65,10 @@ const PINIA_STORE_KEYS = {
   AUTH: 'ms:pinia-store:Auth',
   DIALOG: 'ms:pinia-store:Dialog',
   GROUPS: 'ms:pinia-store:Groups',
+  PATIENT: 'ms:pinia-store:Patient',
   STUDIES: 'ms:pinia-store:Studies',
   USER: 'ms:pinia-store:User',
   USERS: 'ms:pinia-store:Users'
 }
 
-export { BUS_EVENTS, CONSTANTS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS, USER_STATUS }
+export { BUS_EVENTS, CONSTANTS, COLLECTIONS, NOTIFICATION_MESSAGES, PINIA_STORE_KEYS, USER_STATUS }

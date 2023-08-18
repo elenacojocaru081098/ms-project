@@ -28,6 +28,10 @@ function submitForm() {
   })
   props.action(gid)
 }
+
+function goToAddQuestion() {
+  router.push({ path: `/studies/${props.study.id}/questions/add` })
+}
 </script>
 
 <template>
@@ -39,7 +43,7 @@ function submitForm() {
       <v-form
         id="study-form"
         @submit.prevent="submitForm"
-        validate-on="blur"
+        validate-on="lazy submit"
         v-model:model-value="valid"
       >
         <section v-for="field in formFields" :key="field.label">
@@ -73,11 +77,13 @@ function submitForm() {
     </v-card-text>
     <v-card-actions class="justify-end">
       <v-btn
+        v-if="!newStudy"
         form="study-form"
         type="button"
         append-icon="mdi-help-box-multiple-outline"
         class="px-4"
         color="secondary"
+        @click="goToAddQuestion"
       >
         Intrebari
       </v-btn>

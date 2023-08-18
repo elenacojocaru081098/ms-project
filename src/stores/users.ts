@@ -25,7 +25,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     try {
       const { user: userData } = storeToRefs(useUserStore())
 
-      const user = doc(db, 'users', uid)
+      const user = doc(db, COLLECTIONS.USERS, uid)
       await updateDoc(user, {
         status: USER_STATUS.ACTIVE,
         ...addModifiedTags()
@@ -55,7 +55,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
    * @param { string } uid The db user id
    */
   async function getUserById(uid: string) {
-    const user = await getDoc(doc(db, 'users', uid))
+    const user = await getDoc(doc(db, COLLECTIONS.USERS, uid))
     return { id: user.id, ...user.data() } as IUser
   }
 
@@ -68,10 +68,10 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     let q
     if (cond === 'in' && uids.length === 0) return []
     else if (cond === 'not-in' && uids.length === 0) {
-      q = query(collection(db, 'users'), where('role', '==', 'Participant'))
+      q = query(collection(db, COLLECTIONS.USERS), where('role', '==', 'Participant'))
     } else {
       q = query(
-        collection(db, 'users'),
+        collection(db, COLLECTIONS.USERS),
         where(documentId(), cond, uids),
         where('role', '==', 'Participant')
       )
@@ -103,7 +103,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
    * Gets all the users that are coordinators
    */
   async function getCoordinators() {
-    const q = query(collection(db, 'users'), where('role', '==', 'Coordinator'))
+    const q = query(collection(db, COLLECTIONS.USERS), where('role', '==', 'Coordinator'))
     const qss = await getDocs(q)
 
     const users: Array<IUser> = []
@@ -124,7 +124,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     }
 
     try {
-      const user = doc(db, 'users', uid)
+      const user = doc(db, COLLECTIONS.USERS, uid)
       await updateDoc(user, { ...u })
 
       busToast.emit({
@@ -159,7 +159,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     }
 
     try {
-      const user = doc(db, 'users', data.id)
+      const user = doc(db, COLLECTIONS.USERS, data.id)
       await updateDoc(user, { ...u })
       router.push({ path: '/users' })
 
@@ -190,7 +190,7 @@ export const useUsersStore = defineStore(PINIA_STORE_KEYS.USERS, () => {
     }
 
     try {
-      const user = doc(db, 'users', id)
+      const user = doc(db, COLLECTIONS.USERS, id)
       await updateDoc(user, { ...u })
       router.push({ path: '/users' })
 

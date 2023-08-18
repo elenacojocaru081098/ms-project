@@ -7,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-  <GroupCard v-for="group in groups" :key="group.id" :groupId="group.id" />
+  <GroupCard v-for="group in groups" :key="group.id" :group="group" />
 </template>
