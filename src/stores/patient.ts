@@ -18,6 +18,7 @@ export const usePatientStore = defineStore(PINIA_STORE_KEYS.PATIENT, () => {
       const qss = await getDocs(q)
 
       if (qss.empty) {
+        currentPatient.value = undefined
         pncToCheck.value = pnc
         return false
       }

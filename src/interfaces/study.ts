@@ -12,6 +12,7 @@ export interface IAnswer {
   id?: string
   question: string // id
   answer: string | number | Array<string>
+  patient?: string // id
 }
 
 export interface IStudyQuestion {
@@ -26,13 +27,6 @@ export interface IStudy {
   title: string
   details: string
   questions: Array<IStudyQuestion>
-}
-
-export interface IUserAnswer {
-  study: string // id
-  question: string // id
-  answer_type: 'range' | 'unique' | 'multiple' | 'text'
-  answer: Array<any>
 }
 
 export interface IPatient {

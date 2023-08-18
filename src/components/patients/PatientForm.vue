@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IFormField } from '@/interfaces/form'
 import type { IPatient } from '@/interfaces/study'
+import { storeToRefs } from 'pinia'
 
 const props = defineProps<{
   title: string
@@ -13,7 +14,22 @@ const validation = useValidationRules()
 const validationRules = validation.getPatientRules()
 const emit = defineEmits(['createNewPatient'])
 
-function submitForm() {
+const studiesStore = useStudiesStore()
+const { currentStudy } = storeToRefs(studiesStore)
+const { fetchQuestionsAnswers } = studiesStore
+
+/**
+ * Takes the user to the answer flow
+ */
+async function goToQuestions() {
+  const s = currentStudy.value
+  if (!s.questions || s.questions.length === 0) return
+
+  await fetchQuestionsAnswers()
+  router.push({ path: `/studies/${s.id}/answer/questions` })
+}
+
+async function submitForm() {
   if (!valid.value) return
 
   let data = {} as IPatient
@@ -24,9 +40,6 @@ function submitForm() {
   emit('createNewPatient', data as IPatient)
 }
 </script>
-
-<!-- TODO: move gotoquestions to store -->
-<!-- TODO: add gotoquestion @click on continue -->
 
 <template>
   <v-card>
@@ -56,7 +69,7 @@ function submitForm() {
     </v-card-text>
     <v-card-actions class="justify-end">
       <v-btn v-if="newPatient" form="patient-form" type="submit" color="primary">Salveaza</v-btn>
-      <v-btn v-else form="patient-form" color="primary" @click="">Continua</v-btn>
+      <v-btn v-else form="patient-form" color="primary" @click="goToQuestions">Continua</v-btn>
     </v-card-actions>
   </v-card>
 </template>

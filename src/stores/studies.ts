@@ -306,6 +306,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
           batch.set(aRef, {
             user: ans.user,
             answer: ans.answer,
+            patient: ans.patient,
             ...addTimestamps()
           })
         } else if (
@@ -316,6 +317,7 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
           batch.update(aRef, {
             user: ans.user,
             answer: ans.answer,
+            patient: ans.patient,
             ...addModifiedTags()
           })
         } else if (
@@ -348,7 +350,18 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
    */
   async function fetchQuestionsAnswers() {
     if (!currentStudy.value) return
-    if (answers.value.length > 0) return answers.value
+    const { currentPatient } = storeToRefs(usePatientStore())
+    if (!currentPatient.value) return
+    if (
+      answersFetched.value &&
+      answers.value.length > 0 &&
+      currentPatient.value &&
+      answers.value[0].patient === currentPatient.value.id
+    )
+      return answers.value
+
+    answers.value.length = 0
+
     const ans: Array<IAnswer> = []
     const { user } = useUserStore()
 
@@ -363,7 +376,8 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
             question.id!,
             COLLECTIONS.ANSWERS
           ),
-          where('user', '==', user!.id)
+          where('user', '==', user!.id),
+          where('patient', '==', currentPatient.value?.id)
         )
 
         const qss = await getDocs(q)
@@ -374,7 +388,8 @@ export const useStudiesStore = defineStore(PINIA_STORE_KEYS.STUDIES, () => {
           ans.push({
             id: d.id,
             question: question.id!,
-            answer: data.answer
+            answer: data.answer,
+            patient: data.patient
           })
         })
       }

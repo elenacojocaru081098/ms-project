@@ -114,7 +114,7 @@ function saveAnswers() {
 }
 
 function initialize() {
-  if (answers.value.length > 0 && answers.value.length !== currentStudy.value?.questions.length) {
+  if (answersFetched.value && answers.value.length !== currentStudy.value?.questions.length) {
     const qIdx = currentStudy.value.questions.findIndex(
       (q) => answers.value.findIndex((a) => q.id === a.question) === -1
     )

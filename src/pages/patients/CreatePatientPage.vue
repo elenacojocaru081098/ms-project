@@ -2,8 +2,10 @@
 import type { IPatient } from '@/interfaces/study'
 import { storeToRefs } from 'pinia'
 
-const formFields = ref(useFormStructure().getPatientForm())
-const { currentStudy } = storeToRefs(useStudiesStore())
+const formFields = ref(await useFormStructure().getPatientForm())
+const studiesStore = useStudiesStore()
+const { currentStudy } = storeToRefs(studiesStore)
+const { fetchQuestionsAnswers } = studiesStore
 const patientStore = usePatientStore()
 const { addPatient } = patientStore
 
@@ -18,6 +20,8 @@ function goToQuestions() {
 
 async function createNewPatient(p: IPatient) {
   const result = await addPatient(p)
+  await fetchQuestionsAnswers()
+
   result && goToQuestions()
 }
 </script>
