@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-const formFields = useFormStructure().getRegisterForm()
+const formFields = ref(useFormStructure().getRegisterForm())
 const { user } = storeToRefs(useUserStore())
 
 /**
  * Filters through the available roles for new users
  */
-formFields.forEach((f) => {
+formFields.value.forEach((f) => {
   if (!f.items || f.key !== 'role') return
 
   f.items = f.items.filter((i) => {
@@ -27,7 +27,7 @@ async function submitRegisterForm(valid: boolean) {
 
   // construct the data object from the form fields
   let data: Record<string, string> = {}
-  formFields.forEach((f) => (data[f.key] = f.value))
+  formFields.value.forEach((f) => (data[f.key] = f.value))
   data.gender = extractGenderFromPNC(data.pnc)
   data.birthdate = extractBirthdateFromPNC(data.pnc)
   data.email = data.email.toLowerCase()
@@ -35,7 +35,7 @@ async function submitRegisterForm(valid: boolean) {
   // try to register a new account
   const success = await handleEmailRegister(data)
 
-  if (success) formFields.forEach((f) => (f.value = f.type === 'select' ? null : ''))
+  if (success) formFields.value.forEach((f) => (f.value = f.type === 'select' ? null : ''))
 }
 </script>
 

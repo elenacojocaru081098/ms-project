@@ -20,7 +20,6 @@ const titleIcon = computed(() =>
 const buttonText = computed(() => (formTitle.value === 'Creare cont' ? 'Inregistrare' : 'Salvare'))
 
 function submitForm() {
-  userform.value!.reset()
   emit('submitUser', valid.value)
 }
 </script>
