@@ -128,7 +128,7 @@ const { user } = storeToRefs(useUserStore())
         </section>
       </v-card-title>
       <v-card-subtitle class="text-subtitle-2">
-        <GroupCardInfo />
+        <GroupCardInfo :group="group" />
       </v-card-subtitle>
       <v-card-text v-if="showCoordsList">
         <v-autocomplete
